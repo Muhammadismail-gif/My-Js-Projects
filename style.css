@@ -1,0 +1,145 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f7f8fc;
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+header {
+  text-align: center;
+  padding: 1rem 1rem 2rem;
+  background: linear-gradient(135deg, #222, #444);
+  color: #fff;
+  position: relative;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  animation: slideDown 1s ease-out;
+}
+
+header h1 i{
+    color: #ffcb42;
+}
+
+header p {
+  color: #ccc;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.scroll-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.2rem;
+  background: #ffb400;
+  color: #111;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.scroll-btn:hover {
+  background: #ffcb42;
+  transform: translateY(-3px);
+}
+
+.projects-container {
+  display: grid;
+  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Card styles */
+.project-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 1.8rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.project-card.appear {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.8s ease-out;
+}
+
+.project-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.project-card h2 {
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.project-card p {
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  text-decoration: none;
+  background: #007bff;
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.btn.secondary {
+  background: #333;
+}
+
+.btn.secondary:hover {
+  background: #111;
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  background: #222;
+  color: #fff;
+  font-size: 0.9rem;
+  margin-top: 7rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
