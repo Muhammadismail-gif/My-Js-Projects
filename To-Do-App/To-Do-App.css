@@ -1,0 +1,148 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #141e30, #243b55);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.todo-container {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #ffb400;
+  letter-spacing: 1px;
+}
+
+.input-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.2rem;
+}
+
+#taskInput {
+  flex: 1;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  font-size: 1rem;
+}
+
+#addBtn {
+  background: #ffb400;
+  border: none;
+  color: #111;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0 1rem;
+  transition: background 0.3s, transform 0.3s;
+}
+
+#addBtn:hover {
+  background: #ffd369;
+  transform: scale(1.05);
+}
+
+.task-list {
+  list-style: none;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.task-list li {
+  background: rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+  padding: 0.7rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.task-list li:hover {
+  transform: translateY(-3px);
+}
+
+.task-text {
+  flex: 1;
+  cursor: pointer;
+  word-wrap: break-word;
+}
+
+.completed .task-text {
+  text-decoration: line-through;
+  color: #bbb;
+}
+
+.action-btns i {
+  margin-left: 10px;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.action-btns i:hover {
+  transform: scale(1.2);
+}
+
+.fa-pen { color: #00b4d8; }
+.fa-trash { color: #e63946; }
+.fa-check { color: #06d6a0; }
+
+.bottom-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.bottom-buttons button {
+  border: none;
+  background: #ffb400;
+  color: #111;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.bottom-buttons button:hover {
+  background: #ffd369;
+  transform: scale(1.05);
+}
+
+/* Light theme */
+body.light {
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  color: #111;
+}
+
+body.light .todo-container {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+body.light h1 {
+  color: #007bff;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My To-Do App</title>
+  <link rel="shortcut icon" href="./list-check-solid-full.svg" type="image/x-icon">
+  <link rel="stylesheet" href="To-Do-App.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<body>
+  <div class="todo-container">
+    <h1><i class="fa-solid fa-list-check"></i> My To-Do List</h1>
+
+    <div class="input-section">
+      <input type="text" id="taskInput" placeholder="Enter a new task...">
+      <button id="addBtn"><i class="fa-solid fa-plus"></i> Add</button>
+    </div>
+
+    <ul id="taskList" class="task-list"></ul>
+
+    <div class="bottom-buttons">
+      <button id="clearAll"><i class="fa-solid fa-trash"></i> Clear All</button>
+      <button id="themeToggle"><i class="fa-solid fa-moon"></i></button>
+    </div>
+  </div>
+
+  <script src="./To-Do-App.js"></script>
+</body>
+</html>
