@@ -38,6 +38,45 @@ header p {
   color: #ccc;
   animation: fadeIn 1.5s ease-out;
 }
+ 
+ /* Styling of add a dark/light theme toggle button */
+.theme-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #f4efef;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.theme-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Light theme styles */
+body.light {
+  background: #0f0f0f;
+  color: #f8f6f6;
+}
+
+body.light header {
+  background: #100f0f;
+  color: #f6f3f3;
+}
+
+body.light .project-card {
+  background: #b3a2a2;
+  color: #efe7e7;
+}
+
+body.light footer {
+  background: #0f0c0c;
+  color: #f0efef;
+}
+
 
 .scroll-btn {
   display: inline-block;

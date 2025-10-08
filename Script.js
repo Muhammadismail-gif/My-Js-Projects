@@ -17,6 +17,22 @@
       appearOnScroll.observe(fader);
     });
 
+ //add a dark/light theme toggle button
+  const toggleBtn = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('light');
+    const icon = toggleBtn.querySelector('i');
+    if (body.classList.contains('light')) {
+      icon.classList.replace('fa-moon', 'fa-sun');
+    } else {
+      icon.classList.replace('fa-sun', 'fa-moon');
+    }
+  });
+
+
+
     // Smooth scroll for "View Projects" button
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
