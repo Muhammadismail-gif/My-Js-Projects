@@ -1,0 +1,24 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #222;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.clock-container {
+    text-align: center;
+    font-size: 3rem;
+    background: black;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+}
+
+.clock-container:hover{
+     transform: translateY(-10px) scale(1.02);
+     box-shadow: 0 10px 25px rgba(3, 242, 63, 0.15);
+     
+}
