@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Units Converter</title>
+    <link rel="shortcut icon" href="./calendar-regular-full.svg" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="converter-card">
+        <h1><i class="fas fa-exchange-alt"></i> Units Converter</h1>
+        
+        <div class="form-group">
+            <label for="conversion-type"><i class="fas fa-list"></i> Conversion Type:</label>
+            <select id="conversion-type" class="form-control">
+                <option value="weight">⚖️ Weight</option>
+                <option value="distance">📏 Distance</option>
+                <option value="temperature">🌡️ Temperature</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="input-value"><i class="fas fa-keyboard"></i> Value:</label>
+            <input type="number" id="input-value" class="form-control" placeholder="Enter a number">
+        </div>
+        
+        <div class="unit-selectors">
+            <select id="from-unit" class="form-control unit-select">
+                <!-- Filled by JavaScript -->
+            </select>
+            
+            <button id="swap-units" class="swap-btn" title="Swap units">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            
+            <select id="to-unit" class="form-control unit-select">
+                <!-- Filled by JavaScript -->
+            </select>
+        </div>
+        
+        <div class="button-group">
+            <button id="convert-btn" class="btn btn-primary">
+                <i class="fas fa-calculator"></i> Convert
+            </button>
+            <button id="reset-btn" class="btn btn-secondary">
+                <i class="fas fa-undo"></i> Reset
+            </button>
+        </div>
+        
+        <div id="result-container" class="result-container">
+            <div id="result" class="result-display">
+                Result will appear here
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
