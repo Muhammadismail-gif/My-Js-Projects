@@ -1,0 +1,54 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg, #1e2a36);
+  margin: 0;
+}
+
+.toggle-scene {
+  overflow: visible !important;
+  height: 50vmin;
+  position: absolute;
+}
+
+.bulb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bulb-glass {
+  width: 80px;
+  height: 120px;
+  border: 4px solid #ccc;
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+  background-color: #444;
+  position: relative;
+  box-shadow: none;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.bulb.on .bulb-glass {
+  background-color: #ffee58;
+  box-shadow: 0 0 40px 10px #ffee58;
+  border-color: #fff176;
+}
+
+.bulb-base {
+  width: 40px;
+  height: 40px;
+  background: #999;
+  margin-top: -10px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.bulb-string {
+  width: 4px;
+  height: 100px;
+  background: #888;
+  margin-top: 5px;
+  cursor: pointer;
+}
