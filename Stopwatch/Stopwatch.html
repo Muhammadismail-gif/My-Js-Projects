@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Stopwatch</title>
+  <link rel="shortcut icon" href="./stopwatch-solid-full.svg" type="image/x-icon">
+  <link rel="stylesheet" href="./Stopwatch.css"/>
+</head>
+<body>
+  <div class="stopwatch-container">
+    <h1 id="display">00:00:00.000</h1>
+    <div class="controls">
+      <button id="startStopBtn">Start</button>
+      <button id="lapBtn" disabled>Lap</button>
+      <button id="resetBtn" disabled>Reset</button>
+    </div>
+    <ul id="laps"></ul>
+  </div>
+  <script src="./Stopwatch.js"></script>
+</body>
+</html>
