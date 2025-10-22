@@ -1,20 +1,24 @@
 body {
+    background-image: url(./stopwatch-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #111;
     color: #fff;
     font-family: 'Segoe UI', sans-serif;
   }
   
   .stopwatch-container {
     text-align: center;
-    background: #222;
+    background: #3d3b3b;
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 0 20px #000;
-    width: 300px;
+    height: 300px;
+    width: 400px;
   }
   
   #display {
@@ -23,7 +27,7 @@ body {
   }
   
   .controls button {
-    background-color: #444;
+    background-color: #545454;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -35,7 +39,7 @@ body {
   }
   
   .controls button:hover {
-    background-color: #666;
+    background-color: #d11717;
   }
   
   #laps {
