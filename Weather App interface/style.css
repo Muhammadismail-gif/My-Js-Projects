@@ -1,0 +1,149 @@
+/* style.css */
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #e0f2f7; /* Light blue background */
+    color: #333; /* Darker text for contrast */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Custom scrollbar for better aesthetics */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #e2e8f0; /* Light gray track */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #90cdf4; /* Light blue thumb */
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #63b3ed; /* Darker blue on hover */
+}
+
+/* Specific styles for the temperature graph */
+.temperature-graph {
+    position: relative;
+    height: 120px; /* Fixed height for the graph area */
+    background: linear-gradient(to top, #f0f9ff, #ffffff); /* Subtle light gradient */
+    border-radius: 0.5rem;
+    overflow: hidden; /* Hide overflow from graph lines */
+    border: 1px solid #e2e8f0; /* Light border */
+}
+
+.graph-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    stroke: #3182ce; /* Stronger blue line */
+    stroke-width: 2;
+    fill: url(#graphGradient); /* Fill area under the line */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.graph-point {
+    fill: #3182ce; /* Blue points */
+    stroke: #ffffff; /* White stroke for points */
+    stroke-width: 2;
+}
+
+/* Gradient for the graph fill */
+.graph-fill-gradient {
+    stop-color: #3182ce;
+    stop-opacity: 0.2; /* Lighter opacity for fill */
+}
+.graph-fill-gradient-end {
+    stop-color: #3182ce;
+    stop-opacity: 0;
+}
+
+/* Custom styles for map placeholder */
+.map-placeholder {
+    background-image: url('https://placehold.co/600x400/e2e8f0/63b3ed?text=Map+Placeholder'); /* Lighter placeholder */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.map-label {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.7); /* Lighter background for labels */
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #2d3748; /* Darker text for labels */
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Tailwind overrides for card backgrounds and text colors */
+.bg-gray-50 {
+    background-color: #f8fafc; /* Very light background for main content */
+}
+
+.bg-white {
+    background-color: #ffffff; /* White for cards */
+}
+
+.bg-blue-700 {
+    background-color: #2b6cb0; /* Darker blue for sidebar */
+}
+
+.text-blue-200 {
+    color: #bfdbfe; /* Light blue for sidebar icons */
+}
+
+.text-blue-300 {
+    color: #93c5fd; /* Slightly darker blue for sidebar icons */
+}
+
+.text-gray-800 {
+    color: #2d3748; /* Dark text for headings and main info */
+}
+
+.text-gray-500 {
+    color: #718096; /* Medium gray for secondary text */
+}
+
+.text-gray-100 {
+    background-color: #f7fafc; /* Very light background for input */
+}
+
+.bg-gray-100 {
+    background-color: #f7fafc; /* Very light background for buttons/inputs */
+}
+
+.bg-gray-200:hover {
+    background-color: #edf2f7; /* Light gray hover */
+}
+
+.border-gray-200 {
+    border-color: #edf2f7; /* Light border color */
+}
+
+.shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-inner {
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Ensure icons and text have good contrast */
+.text-yellow-500 {
+    color: #f6ad55; /* Orange-yellow for sun/cloud-sun */
+}
+
+.text-blue-500 {
+    color: #4299e1; /* Standard blue for moon/rain */
+}
