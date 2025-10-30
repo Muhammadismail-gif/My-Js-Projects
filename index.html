@@ -12,7 +12,7 @@
   <header>
     <h1><i class="fa-brands fa-js"></i> My JavaScript Projects</h1>
     <p>Here are some of my JavaScript projects showcasing my frontend skills.</p>
-    <a href="#projects" class="scroll-btn">View Projects <i class="fa-solid fa-arrow-down"></i></a>
+
   <!-- add a dark/light theme toggle button -->
     <button id="theme-toggle" class="theme-btn">
     <i class="fa-solid fa-moon"></i>
@@ -200,5 +200,22 @@
   </footer>
 
   <script src="./Script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.waves.min.js"></script>
+<script>
+VANTA.WAVES({
+  el: "body",
+  mouseControls: true,
+  touchControls: true,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  scale: 1.00,
+  color: 0xff7a00, // your orange theme
+  shininess: 50.00,
+  waveHeight: 15.00,
+  waveSpeed: 1.0,
+  zoom: 1.0
+})
+</script>
 </body>
 </html>

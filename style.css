@@ -77,24 +77,6 @@ body.light footer {
   color: #f0efef;
 }
 
-
-.scroll-btn {
-  display: inline-block;
-  margin-top: 1.5rem;
-  padding: 0.7rem 1.2rem;
-  background: #ffb400;
-  color: #111;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.3s, transform 0.3s;
-}
-
-.scroll-btn:hover {
-  background: #ffcb42;
-  transform: translateY(-3px);
-}
-
 .projects-container {
   display: grid;
   gap: 1.8rem;
