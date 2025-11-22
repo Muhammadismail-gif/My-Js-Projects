@@ -1,4 +1,4 @@
-const words = ["javascript", "programming", "developer", "computer", "scramble", "keyboard", "internet"];
+const words = ["javascript", "programming", "developer", "computer", "scramble", "keyboard", "internet", "function", "variable", "object", "array", "string", "boolean", "condition", "loop", "event", "listener", "document", "element", "style", "window", "browser", "debug", "compile", "execute", "syntax", "algorithm", "data", "structure", "class", "method", "property", "inheritance", "encapsulation", "polymorphism", "abstraction", "interface", "module", "package", "library", "framework", "api", "json", "xml", "http", "https", "server", "client", "database", "query", "index", "cache", "session"];
 let currentWord = "";
 let scrambled = "";
 
