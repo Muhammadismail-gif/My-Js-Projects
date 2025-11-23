@@ -6,22 +6,25 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    
+
 }
 
 .container {
-    background: rgb(218, 139, 139);
+    background: rgb(172, 93, 93);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .container h2{
     color: rgb(239, 239, 235);
+
 }
 
 .container label{
     color: white;
+
 }
 input {
     padding: 8px;
@@ -48,7 +51,12 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0874e9;
+    transform: translate(-3px, -2px);
+    -webkit-transform: translate(-3px, -2px);
+    -moz-transform: translate(-3px, -2px);
+    -ms-transform: translate(-3px, -2px);
+    -o-transform: translate(-3px, -2px);
 }
 
 p {
