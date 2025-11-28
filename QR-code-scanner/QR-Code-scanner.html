@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QR Code Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- QR library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f4f4f4;
+        display: flex;
+        justify-content: center;
+    }
+    .container {
+        width: 100%;
+        max-width: 460px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+    }
+    input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    .row {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .row div {
+        flex: 1;
+    }
+    #qrcode {
+        margin: 20px auto;
+        width: fit-content;
+        background: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 12px;
+        background: #007bff;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .clear-btn {
+        background: #ff4444;
+    }
+    .clear-btn:hover {
+        background: #cc0000;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>QR Code Generator</h2>
+
+    <label for="qrText">Text / URL</label>
+    <input type="text" id="qrText" placeholder="Enter text or URL">
+
+    <label for="size">Size (px)</label>
+    <input type="range" id="size" min="100" max="500" value="250">
+    <span id="sizeValue">250</span>
+
+    <label for="level">Error Correction</label>
+    <select id="level">
+        <option value="L">L (Low)</option>
+        <option value="M" selected>M (Medium)</option>
+        <option value="Q">Q (Quartile)</option>
+        <option value="H">H (High)</option>
+    </select>
+
+    <div class="row">
+        <div>
+            <label>Foreground</label>
+            <input type="color" id="fgColor" value="#000000">
+        </div>
+        <div>
+            <label>Background</label>
+            <input type="color" id="bgColor" value="#ffffff">
+        </div>
+    </div>
+
+    <button id="generateBtn">Generate QR</button>
+    <button id="downloadBtn">Download PNG</button>
+    <button class="clear-btn" id="clearBtn">Clear</button>
+
+    <div id="qrcode"></div>
+</div>
+
+<script>
+    let qr;
+    const qrcodeContainer = document.getElementById("qrcode");
+
+    function loadSettings() {
+        const saved = JSON.parse(localStorage.getItem("qrSettings") || "{}");
+
+        if (saved.text) document.getElementById("qrText").value = saved.text;
+        if (saved.size) document.getElementById("size").value = saved.size;
+        if (saved.level) document.getElementById("level").value = saved.level;
+        if (saved.fg) document.getElementById("fgColor").value = saved.fg;
+        if (saved.bg) document.getElementById("bgColor").value = saved.bg;
+
+        document.getElementById("sizeValue").innerText = saved.size || 250;
+    }
+
+    function saveSettings() {
+        const settings = {
+            text: document.getElementById("qrText").value,
+            size: document.getElementById("size").value,
+            level: document.getElementById("level").value,
+            fg: document.getElementById("fgColor").value,
+            bg: document.getElementById("bgColor").value
+        };
+        localStorage.setItem("qrSettings", JSON.stringify(settings));
+    }
+
+    function generateQR() {
+        const text = document.getElementById("qrText").value.trim();
+        const size = Number(document.getElementById("size").value);
+        const level = document.getElementById("level").value;
+        const fg = document.getElementById("fgColor").value;
+        const bg = document.getElementById("bgColor").value;
+
+        if (!text) return;
+
+        qrcodeContainer.innerHTML = ""; // clear previous
+
+        qr = new QRCode(qrcodeContainer, {
+            text: text,
+            width: size,
+            height: size,
+            colorDark: fg,
+            colorLight: bg,
+            correctLevel: QRCode.CorrectLevel[level]
+        });
+
+        saveSettings();
+    }
+
+    // Download PNG
+    document.getElementById("downloadBtn").onclick = function () {
+        if (!qrcodeContainer.querySelector("img")) return;
+
+        const img = qrcodeContainer.querySelector("img").src;
+        const link = document.createElement("a");
+        link.href = img;
+        link.download = "qrcode.png";
+        link.click();
+    };
+
+    // Generate button
+    document.getElementById("generateBtn").onclick = generateQR;
+
+    // Clear Button
+    document.getElementById("clearBtn").onclick = () => {
+        qrcodeContainer.innerHTML = "";
+        document.getElementById("qrText").value = "";
+        localStorage.removeItem("qrSettings");
+    };
+
+    // Live preview (debounced)
+    let debounceTimer;
+    document.getElementById("qrText").addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(generateQR, 500);
+    });
+
+    document.getElementById("size").addEventListener("input", () => {
+        document.getElementById("sizeValue").innerText = document.getElementById("size").value;
+        generateQR();
+    });
+
+    document.getElementById("fgColor").addEventListener("input", generateQR);
+    document.getElementById("bgColor").addEventListener("input", generateQR);
+    document.getElementById("level").addEventListener("change", generateQR);
+
+    // Initialize
+    loadSettings();
+    generateQR();
+</script>
+
+</body>
+</html>
