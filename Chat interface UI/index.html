@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chat UI — Frontend Only</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="shortcut icon" href="./live-chat.png" type="image/x-icon">
+</head>
+<body>
+  <main class="container" role="main">
+    <aside class="sidebar" aria-label="Conversation list">
+      <div class="sidebar-top">
+        <div class="search">
+          <label for="searchInput" class="sr-only">Search conversations</label>
+          <input id="searchInput" type="search" placeholder="Search chats" aria-label="Search chats" />
+        </div>
+        <button id="newChat" class="btn ghost" aria-label="New chat">+ New Chat</button>
+      </div>
+
+      <div id="conversations" class="conversations" tabindex="0" aria-live="polite"></div>
+    </aside>
+
+    <section class="chat-panel" aria-label="Chat panel">
+      <header class="chat-header">
+        <div class="avatar" id="panelAvatar" aria-hidden>G</div>
+        <div class="header-meta">
+          <div id="panelTitle" class="title">Bot</div>
+          <div id="panelSubtitle" class="subtitle">Online</div>
+        </div>
+      </header>
+
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+      <form id="composer" class="composer" action="#" aria-label="Message composer">
+        <div class="input-wrap">
+          <label for="messageInput" class="sr-only">Type your message</label>
+          <textarea id="messageInput" placeholder="Type a message — press Enter to send" rows="2" aria-label="Type a message"></textarea>
+        </div>
+
+        <div class="composer-tools">
+          <button id="attachBtn" type="button" class="btn ghost small" aria-label="Attach file">📎</button>
+          <button id="sendBtn" type="submit" class="btn primary" aria-label="Send message">Send</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Templates (kept in DOM but not visible) -->
+  <template id="convTemplate">
+    <div class="conversation" data-id="">
+      <div class="conv-left">
+        <div class="conv-avatar">A</div>
+      </div>
+      <div class="conv-meta">
+        <div class="conv-title">Conversation</div>
+        <div class="conv-snippet">Tap to open</div>
+      </div>
+    </div>
+  </template>
+
+  <template id="msgTemplate">
+    <div class="message">
+      <div class="bubble content"></div>
+      <div class="time meta-time"></div>
+    </div>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

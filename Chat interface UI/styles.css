@@ -1,0 +1,109 @@
+/* styles.css — custom CSS (no frameworks) */
+
+/* Basic variables */
+:root{
+  --bg: #071227;
+  --panel: #0b1726;
+  --accent: #4f46e5;
+  --muted: #94a3b8;
+  --me: #06b6d4;
+  --glass: rgba(255,255,255,0.03);
+  --radius: 12px;
+  --max-width: 1100px;
+  --font-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+*{box-sizing: border-box}
+html,body{height:100%;margin:0;font-family:var(--font-sans);background:linear-gradient(180deg,#041022 0%, #071227 100%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Layout */
+.container{
+  max-width:var(--max-width);
+  margin:28px auto;
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:18px;
+  padding:18px;
+  align-items:stretch;
+}
+
+/* Sidebar */
+.sidebar{
+  background:linear-gradient(180deg,var(--panel), rgba(11,18,32,0.9));
+  border-radius:var(--radius);
+  padding:12px;
+  min-height:560px;
+  display:flex;
+  flex-direction:column;
+}
+.sidebar-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.search{flex:1;background:var(--glass);padding:8px;border-radius:8px;display:flex;align-items:center}
+.search input{background:transparent;border:0;outline:none;color:inherit;width:100%;font-size:14px}
+.btn{border:0;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.btn.primary{background:linear-gradient(90deg,var(--accent), #06b6d4);color:#02141a}
+.btn.small{padding:8px;font-size:14px}
+
+/* Conversation list */
+.conversations{
+  overflow:auto;
+  padding-right:6px;
+    flex:1; 
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+.conversation{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;cursor:pointer}
+.conversation:hover{background:rgba(255,255,255,0.02)}
+.conv-avatar{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#0f1724,#111827);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)}
+.conv-title{font-weight:600}
+.conv-snippet{color:var(--muted);font-size:13px;margin-top:4px}
+
+/* Chat panel */
+.chat-panel{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:var(--radius);
+  display:flex;
+  flex-direction:column;
+  min-height:560px;
+}
+.chat-header{display:flex;gap:12px;align-items:center;padding:12px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.avatar{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#0f1724,#071227);font-weight:700;color:var(--accent)}
+.header-meta .title{font-weight:700}
+.header-meta .subtitle{color:var(--muted);font-size:13px}
+
+/* Messages */
+.messages{flex:1;padding:20px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.message{max-width:72%;display:flex;flex-direction:column}
+.bubble{padding:10px 12px;border-radius:12px;line-height:1.3}
+.message.me{margin-left:auto}
+.message.me .bubble{background:linear-gradient(90deg,var(--me), #06b6d4);color:#021517;border-bottom-right-radius:6px}
+.message.bot .bubble{background:rgba(255,255,255,0.03);color:var(--muted);border-bottom-left-radius:6px}
+.meta-time{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* Typing indicator */
+.typing{display:flex;gap:6px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);opacity:0.6;animation:blink 1.2s infinite}
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%{opacity:0.2}50%{opacity:1}100%{opacity:0.2}}
+
+/* Composer */
+.composer{display:flex;gap:10px;padding:12px;border-top:1px solid rgba(255,255,255,0.03);align-items:center}
+.input-wrap{flex:1;background:var(--glass);padding:8px;border-radius:10px;display:flex;align-items:center}
+.input-wrap textarea{width:100%;height:46px;resize:none;background:transparent;border:0;color:inherit;padding:6px;font-size:15px;outline:none}
+.composer-tools{display:flex;gap:8px;align-items:center}
+
+/* Empty state */
+.empty{padding:28px;text-align:center;color:var(--muted)}
+
+/* Responsive */
+@media (max-width:880px){
+  .container{grid-template-columns:1fr;padding:12px}
+  .sidebar{display:none}
+}
+@media (max-width:480px){
+  .chat-header .header-meta .title{font-size:14px}
+  .chat-header .header-meta .subtitle{font-size:12px}
+}
