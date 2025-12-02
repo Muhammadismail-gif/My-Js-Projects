@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OMDB Movie Search App</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b2233;--muted:#98a0ac;--accent:#ff6b6b}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#071126 0%, #0b1a2a 100%);color:#e6eef6;display:flex;flex-direction:column;align-items:center;padding:28px}
+    .container{width:100%;max-width:1000px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    h1{font-size:20px;margin:0}
+    .searchbar{display:flex;gap:8px}
+    input[type="search"]{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit;width:360px;max-width:60vw}
+    button{padding:10px 14px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer}
+    button:disabled{opacity:.6;cursor:default}
+    .meta{color:var(--muted);font-size:13px;margin-top:6px}
+    .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:10px;border-radius:10px;display:flex;flex-direction:column;align-items:center;min-height:260px}
+    .poster{width:100%;height:220px;background:#071826;border-radius:8px;background-size:cover;background-position:center;margin-bottom:8px}
+    .title{font-weight:600;text-align:center;font-size:14px}
+    .sub{font-size:13px;color:var(--muted);margin-top:6px}
+    .pager{display:flex;gap:8px;justify-content:center;margin-top:18px}
+    .empty{color:var(--muted);text-align:center;padding:30px}
+    /* modal */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);visibility:hidden;opacity:0;transition:opacity .15s}
+    .modal.open{visibility:visible;opacity:1}
+    .modal-card{background:var(--card);padding:18px;border-radius:12px;max-width:900px;width:92%;display:flex;gap:18px}
+    .modal-left{width:240px}
+    .modal-left .poster{height:360px}
+    .modal-right{flex:1}
+    .close{background:transparent;border:0;color:var(--muted);font-size:18px;cursor:pointer}
+    @media (max-width:640px){.modal-card{flex-direction:column}.modal-left{width:100%}.modal-left .poster{height:260px}}
+    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Movie Search (OMDB)</h1>
+      <div class="searchbar" role="search">
+        <input id="q" type="search" placeholder="Search movies, e.g. Batman" aria-label="Search movies" />
+        <button id="searchBtn">Search</button>
+      </div>
+    </header>
+
+    <div class="meta" id="meta">Enter a title and press Search.</div>
+
+    <main>
+      <div id="results" class="results"></div>
+      <div id="empty" class="empty" hidden>No results yet.</div>
+      <div class="pager" id="pager" hidden>
+        <button id="prevBtn">Prev</button>
+        <div id="pageInfo" class="meta"></div>
+        <button id="nextBtn">Next</button>
+      </div>
+    </main>
+
+    <footer>All rights reserved</footer>
+  </div>
+
+  <!-- details modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card" role="document">
+      <div class="modal-left">
+        <div id="modalPoster" class="poster"></div>
+      </div>
+      <div class="modal-right">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <h2 id="modalTitle" style="margin:0 0 6px 0"></h2>
+            <div id="modalYear" class="sub"></div>
+          </div>
+          <button class="close" id="closeModal" aria-label="Close details">✕</button>
+        </div>
+        <p id="modalPlot" style="margin-top:12px;color:var(--muted)"></p>
+        <div style="margin-top:12px;color:var(--muted)" id="modalExtra"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ============ Configuration =============
+  
+  const OMDB_API_KEY = '276aa3d';
+
+
+  const qEl = document.getElementById('q');
+  const searchBtn = document.getElementById('searchBtn');
+  const resultsEl = document.getElementById('results');
+  const metaEl = document.getElementById('meta');
+  const emptyEl = document.getElementById('empty');
+  const pager = document.getElementById('pager');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const pageInfo = document.getElementById('pageInfo');
+
+  const modal = document.getElementById('modal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const modalPoster = document.getElementById('modalPoster');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalYear = document.getElementById('modalYear');
+  const modalPlot = document.getElementById('modalPlot');
+  const modalExtra = document.getElementById('modalExtra');
+
+  let state = { q: '', page: 1, totalResults: 0 };
+  let debounceTimer = null;
+
+  function setMeta(text){ metaEl.textContent = text }
+
+  function debounce(fn, delay=400){
+    return function(...args){
+      if(debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(()=>fn.apply(this,args), delay);
+    }
+  }
+
+  async function searchMovies(q, page=1){
+    if(!q) return;
+    setMeta('Searching...');
+    resultsEl.innerHTML = '';
+    emptyEl.hidden = true;
+    pager.hidden = true;
+
+    try{
+      const url = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(q)}&page=${page}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if(data.Response === 'True'){
+        state.q = q; state.page = page; state.totalResults = parseInt(data.totalResults,10);
+        renderResults(data.Search);
+        updatePager();
+        setMeta(`Showing results for "${q}"`);
+      } else {
+        setMeta('No results.');
+        emptyEl.hidden = false;
+      }
+    } catch(err){
+      console.error(err);
+      setMeta('Error fetching data. Check your network.');
+      emptyEl.hidden = false;
+    }
+  }
+
+  function renderResults(items){
+    resultsEl.innerHTML = '';
+    items.forEach(item=>{
+      const div = document.createElement('div');
+      div.className = 'card';
+
+      const poster = document.createElement('div');
+      poster.className = 'poster';
+      poster.style.backgroundImage = item.Poster && item.Poster !== 'N/A' ? `url(${item.Poster})` : `linear-gradient(180deg,#0b2330,#071826)`;
+
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = item.Title;
+
+      const sub = document.createElement('div');
+      sub.className = 'sub';
+      sub.textContent = `${item.Year} • ${item.Type}`;
+
+      div.appendChild(poster);
+      div.appendChild(title);
+      div.appendChild(sub);
+
+      div.tabIndex = 0;
+      div.setAttribute('role', 'button');
+      div.style.outline = 'none';
+      div.addEventListener('click', ()=>openDetails(item.imdbID));
+      div.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') openDetails(item.imdbID) });
+
+      resultsEl.appendChild(div);
+    });
+  }
+
+  async function openDetails(imdbID){
+    try{
+      modal.setAttribute('aria-hidden','false');
+      modal.classList.add('open');
+      modalPoster.style.backgroundImage = '';
+      modalTitle.textContent = 'Loading...';
+      modalYear.textContent = '';
+      modalPlot.textContent = '';
+      modalExtra.textContent = '';
+
+      const url = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbID}&plot=full`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if(data.Response === 'True'){
+        modalPoster.style.backgroundImage = data.Poster && data.Poster !== 'N/A' ? `url(${data.Poster})` : '';
+        modalTitle.textContent = `${data.Title}`;
+        modalYear.textContent = `${data.Year} • ${data.Genre} • ${data.Runtime}`;
+        modalPlot.textContent = data.Plot !== 'N/A' ? data.Plot : '';
+        modalExtra.innerHTML = `Released: ${data.Released || 'N/A'}<br>Director: ${data.Director || 'N/A'}<br>Actors: ${data.Actors || 'N/A'}<br>IMDB Rating: ${data.imdbRating || 'N/A'}`;
+      } else {
+        modalTitle.textContent = 'Details not available.';
+      }
+    } catch(e){
+      console.error(e);
+      modalTitle.textContent = 'Error loading details.';
+    }
+  }
+
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+  }
+
+  function updatePager(){
+    const perPage = 10; // OMDB returns 10 per page
+    const total = state.totalResults || 0;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    pageInfo.textContent = `Page ${state.page} of ${totalPages} — ${total} results`;
+    pager.hidden = total <= perPage;
+    prevBtn.disabled = state.page <= 1;
+    nextBtn.disabled = state.page >= totalPages;
+  }
+
+  // ========== Event wiring ==========
+  searchBtn.addEventListener('click', ()=>{
+    const q = qEl.value.trim();
+    if(!q) return setMeta('Please enter a search term.');
+    searchMovies(q, 1);
+  });
+
+  qEl.addEventListener('input', debounce((e)=>{
+    // optional: live search as user types
+    const q = e.target.value.trim();
+    if(q.length >= 3) searchMovies(q, 1);
+  }, 600));
+
+  prevBtn.addEventListener('click', ()=>{
+    if(state.page > 1) searchMovies(state.q, state.page - 1);
+  });
+  nextBtn.addEventListener('click', ()=>{
+    const perPage = 10;
+    const totalPages = Math.ceil(state.totalResults / perPage);
+    if(state.page < totalPages) searchMovies(state.q, state.page + 1);
+  });
+
+  closeModalBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+  // quick check for missing API key
+  if(OMDB_API_KEY === '276aa3d'){
+    setMeta('276aa3d');
+  }
+
+  </script>
+</body>
+</html>
