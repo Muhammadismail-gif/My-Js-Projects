@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Music Player V2</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .player-container {
+      width: 380px;
+      backdrop-filter: blur(18px);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .cover {
+      width: 100%;
+      height: 240px;
+      border-radius: 18px;
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .artist {
+      font-size: 14px;
+      color: #ddd;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+      user-select: none;
+      transition: 0.3s;
+      font-size: 18px;
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 15px;
+    }
+
+    .progress {
+      width: 0%;
+      height: 100%;
+      background: #1db954;
+      border-radius: 5px;
+    }
+
+    .volume-box {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type=range] {
+      width: 100%;
+    }
+
+    .playlist {
+      margin-top: 25px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .song-item {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .song-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .waveform {
+      width: 100%;
+      height: 60px;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="player-container">
+
+  <div class="cover" id="cover"></div>
+  <div class="title" id="title">Song Title</div>
+  <div class="artist" id="artist">Artist Name</div>
+
+  <div class="progress-bar" id="progressBar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <canvas class="waveform" id="waveCanvas"></canvas>
+
+  <div class="controls">
+    <div class="btn" onclick="prevSong()">⏮</div>
+    <div class="btn" id="playBtn" onclick="togglePlay()">▶</div>
+    <div class="btn" onclick="nextSong()">⏭</div>
+  </div>
+
+  <div class="volume-box">
+    🔊 <input type="range" min="0" max="1" step="0.01" id="volumeSlider" />
+  </div>
+
+  <div class="playlist" id="playlist"></div>
+
+  <audio id="audio"></audio>
+</div>
+
+<script>
+  const audio = document.getElementById("audio");
+  const playBtn = document.getElementById("playBtn");
+  const progress = document.getElementById("progress");
+  const progressBar = document.getElementById("progressBar");
+  const canvas = document.getElementById("waveCanvas");
+  const ctx = canvas.getContext("2d");
+
+  const songs = [
+    { title: "Dreams", artist: "Unknown", src: "song1.mp3", cover: "https://i.imgur.com/8Km9tLL.jpg" },
+    { title: "Skyfall", artist: "Unknown", src: "song2.mp3", cover: "https://i.imgur.com/7rlJw4j.jpg" },
+    { title: "Waves", artist: "Unknown", src: "song3.mp3", cover: "https://i.imgur.com/YoKD9Yg.jpeg" }
+  ];
+
+  let index = 0;
+
+  function loadSong(i) {
+    const s = songs[i];
+    document.getElementById("title").textContent = s.title;
+    document.getElementById("artist").textContent = s.artist;
+    document.getElementById("cover").style.backgroundImage = `url(${s.cover})`;
+
+    audio.src = s.src;
+    drawWaveform();
+  }
+
+  loadSong(index);
+
+  function togglePlay() {
+    if (audio.paused) {
+      audio.play();
+      playBtn.textContent = "⏸";
+    } else {
+      audio.pause();
+      playBtn.textContent = "▶";
+    }
+  }
+
+  function nextSong() {
+    index = (index + 1) % songs.length;
+    loadSong(index);
+    audio.play();
+    playBtn.textContent = "⏸";
+  }
+
+  function prevSong() {
+    index = (index - 1 + songs.length) % songs.length;
+    loadSong(index);
+    audio.play();
+    playBtn.textContent = "⏸";
+  }
+
+  audio.addEventListener("timeupdate", () => {
+    if (audio.duration) {
+      progress.style.width = (audio.currentTime / audio.duration) * 100 + "%";
+    }
+  });
+
+  progressBar.addEventListener("click", (event) => {
+    const rect = progressBar.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const width = rect.width;
+    audio.currentTime = (x / width) * audio.duration;
+  });
+
+  document.getElementById("volumeSlider").addEventListener("input", (e) => {
+    audio.volume = e.target.value;
+  });
+
+  const playlistDiv = document.getElementById("playlist");
+  songs.forEach((s, i) => {
+    const div = document.createElement("div");
+    div.className = "song-item";
+    div.textContent = s.title + " - " + s.artist;
+    div.onclick = () => {
+      index = i;
+      loadSong(i);
+      audio.play();
+      playBtn.textContent = "⏸";
+    };
+    playlistDiv.appendChild(div);
+  });
+
+  function drawWaveform() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#1db954";
+
+    for (let i = 0; i < 50; i++) {
+      const barHeight = Math.random() * 50;
+      const barWidth = 6;
+      ctx.fillRect(i * 7, 60 - barHeight, barWidth, barHeight);
+    }
+  }
+</script>
+
+</body>
+</html>
