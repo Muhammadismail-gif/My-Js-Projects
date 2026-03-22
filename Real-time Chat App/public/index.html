@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatStream | Real-time Messaging</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <span class="logo-icon">💬</span>
+                <h1>ChatStream</h1>
+                <p>Connect with anyone, anywhere, instantly</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">👤 Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Enter your username" 
+                        required
+                        maxlength="20"
+                        autocomplete="off"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="room">🏠 Room</label>
+                    <div class="room-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="room" 
+                            placeholder="Join or create a room" 
+                            required
+                            maxlength="20"
+                            autocomplete="off"
+                        >
+                        <div class="room-suggestions" id="room-suggestions">
+                            <span class="suggestion-label">Popular:</span>
+                            <button type="button" class="room-chip" data-room="general">#general</button>
+                            <button type="button" class="room-chip" data-room="tech">#tech</button>
+                            <button type="button" class="room-chip" data-room="random">#random</button>
+                            <button type="button" class="room-chip" data-room="help">#help</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span>🚀</span> Join Chat
+                </button>
+            </form>
+            
+            <div class="login-features">
+                <div class="feature">
+                    <span>⚡</span>
+                    <p>Real-time messaging</p>
+                </div>
+                <div class="feature">
+                    <span>🔒</span>
+                    <p>Private rooms</p>
+                </div>
+                <div class="feature">
+                    <span>📱</span>
+                    <p>Mobile friendly</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="chat-screen hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>💬 ChatStream</h2>
+                <button id="toggle-sidebar" class="btn-icon">✕</button>
+            </div>
+            
+            <div class="room-info">
+                <div class="room-badge">
+                    <span>🏠</span>
+                    <span id="room-name">general</span>
+                </div>
+                <button id="leave-room" class="btn btn-small btn-danger">Leave</button>
+            </div>
+            
+            <div class="users-section">
+                <h3>
+                    <span>👥 Online</span>
+                    <span id="user-count" class="badge">0</span>
+                </h3>
+                <ul id="users-list" class="users-list">
+                    <!-- Users injected here -->
+                </ul>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator"></div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <button id="menu-toggle" class="btn-icon">☰</button>
+                <div class="header-info">
+                    <h2 id="header-room">general</h2>
+                    <span id="header-status" class="status">
+                        <span class="status-dot"></span> Connected
+                    </span>
+                </div>
+                <div class="header-actions">
+                    <button id="clear-chat" class="btn-icon" title="Clear chat">🗑️</button>
+                    <button id="theme-toggle" class="btn-icon" title="Toggle theme">🌙</button>
+                </div>
+            </header>
+
+            <!-- Messages Area -->
+            <div id="messages" class="messages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">👋</div>
+                    <h3>Welcome to the chat!</h3>
+                    <p>Start messaging with others in this room.</p>
+                </div>
+                <!-- Messages injected here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <form id="message-form" class="message-form">
+                    <div class="input-wrapper">
+                        <button type="button" id="emoji-btn" class="btn-icon">😊</button>
+                        <input 
+                            type="text" 
+                            id="message-input" 
+                            placeholder="Type a message..." 
+                            autocomplete="off"
+                            maxlength="500"
+                        >
+                        <button type="submit" class="btn btn-primary btn-send">
+                            <span>➤</span>
+                        </button>
+                    </div>
+                </form>
+                <div class="input-hints">
+                    <span>Press Enter to send</span>
+                    <span id="char-count">0/500</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Emoji Picker Modal -->
+    <div id="emoji-modal" class="emoji-modal hidden">
+        <div class="emoji-grid">
+            <span class="emoji">😀</span><span class="emoji">😂</span><span class="emoji">🥰</span>
+            <span class="emoji">😎</span><span class="emoji">🤔</span><span class="emoji">😴</span>
+            <span class="emoji">👍</span><span class="emoji">👎</span><span class="emoji">🎉</span>
+            <span class="emoji">🔥</span><span class="emoji">💯</span><span class="emoji">❤️</span>
+            <span class="emoji">👋</span><span class="emoji">🙏</span><span class="emoji">✅</span>
+            <span class="emoji">⚡</span><span class="emoji">🚀</span><span class="emoji">💡</span>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/chat.js"></script>
+</body>
+</html>

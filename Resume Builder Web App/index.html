@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder Pro | Create Professional Resumes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <!-- html2pdf library for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">📄</span>
+                <h1>ResumeBuilder<span class="highlight">Pro</span></h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="loadExample">Load Example</button>
+                <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                <button class="btn btn-primary" id="downloadPdf">
+                    <span>⬇️</span> Download PDF
+                </button>
+            </div>
+        </header>
+
+        <!-- Template Selector -->
+        <section class="template-section">
+            <h3>Choose Template</h3>
+            <div class="template-grid">
+                <div class="template-card active" data-template="modern">
+                    <div class="template-preview modern-preview">
+                        <div class="tp-header"></div>
+                        <div class="tp-content">
+                            <div class="tp-sidebar"></div>
+                            <div class="tp-main"></div>
+                        </div>
+                    </div>
+                    <p>Modern</p>
+                </div>
+                <div class="template-card" data-template="classic">
+                    <div class="template-preview classic-preview">
+                        <div class="tp-line"></div>
+                        <div class="tp-block"></div>
+                        <div class="tp-block"></div>
+                    </div>
+                    <p>Classic</p>
+                </div>
+                <div class="template-card" data-template="minimal">
+                    <div class="template-preview minimal-preview">
+                        <div class="tp-center"></div>
+                        <div class="tp-line-short"></div>
+                        <div class="tp-line-full"></div>
+                    </div>
+                    <p>Minimal</p>
+                </div>
+                <div class="template-card" data-template="creative">
+                    <div class="template-preview creative-preview">
+                        <div class="tp-accent"></div>
+                        <div class="tp-body"></div>
+                    </div>
+                    <p>Creative</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Editor Area -->
+        <main class="editor-layout">
+            <!-- Left Panel: Forms -->
+            <aside class="editor-panel">
+                <div class="panel-header">
+                    <h3>📝 Editor</h3>
+                </div>
+                
+                <div class="accordion">
+                    <!-- Personal Info -->
+                    <div class="accordion-item active">
+                        <button class="accordion-header">
+                            <span>👤 Personal Information</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <form id="personalForm" class="form-grid">
+                                <div class="form-group">
+                                    <label>Full Name *</label>
+                                    <input type="text" id="fullName" placeholder="John Doe" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Professional Title</label>
+                                    <input type="text" id="jobTitle" placeholder="Senior Software Engineer">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <input type="email" id="email" placeholder="john@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="tel" id="phone" placeholder="+1 (555) 123-4567">
+                                </div>
+                                <div class="form-group">
+                                    <label>Location</label>
+                                    <input type="text" id="location" placeholder="San Francisco, CA">
+                                </div>
+                                <div class="form-group">
+                                    <label>Website/Portfolio</label>
+                                    <input type="url" id="website" placeholder="https://johndoe.com">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Professional Summary</label>
+                                    <textarea id="summary" rows="4" placeholder="Brief overview of your professional background and key strengths..."></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span>💼 Work Experience</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div id="experienceList" class="dynamic-list">
+                                <!-- Experience items injected here -->
+                            </div>
+                            <button type="button" class="btn btn-add" id="addExperience">
+                                <span>+</span> Add Experience
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span>🎓 Education</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div id="educationList" class="dynamic-list">
+                                <!-- Education items injected here -->
+                            </div>
+                            <button type="button" class="btn btn-add" id="addEducation">
+                                <span>+</span> Add Education
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span>⚡ Skills</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="form-group">
+                                <label>Add Skills (comma separated)</label>
+                                <textarea id="skills" rows="3" placeholder="JavaScript, React, Node.js, Python, Project Management..."></textarea>
+                            </div>
+                            <div class="skills-preview" id="skillsPreview"></div>
+                        </div>
+                    </div>
+
+                    <!-- Projects -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span>🚀 Projects</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div id="projectsList" class="dynamic-list">
+                                <!-- Project items injected here -->
+                            </div>
+                            <button type="button" class="btn btn-add" id="addProject">
+                                <span>+</span> Add Project
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Certifications -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span>🏆 Certifications</span>
+                            <span class="accordion-icon">▼</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div id="certificationsList" class="dynamic-list">
+                                <!-- Certification items injected here -->
+                            </div>
+                            <button type="button" class="btn btn-add" id="addCertification">
+                                <span>+</span> Add Certification
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel: Live Preview -->
+            <section class="preview-panel">
+                <div class="panel-header sticky">
+                    <h3>👁️ Live Preview</h3>
+                    <div class="zoom-controls">
+                        <button id="zoomOut">−</button>
+                        <span id="zoomLevel">100%</span>
+                        <button id="zoomIn">+</button>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <div id="resumePreview" class="resume-page">
+                        <!-- Resume content injected here based on template -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Hidden Templates for Rendering -->
+    <template id="experienceFormTemplate">
+        <div class="dynamic-item" data-id="{id}">
+            <div class="item-header">
+                <span>Experience #{num}</span>
+                <button type="button" class="btn-remove" onclick="app.removeItem('experience', {id})">🗑️</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" class="exp-title" placeholder="Software Engineer">
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" class="exp-company" placeholder="Tech Corp">
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="month" class="exp-start">
+                </div>
+                <div class="form-group">
+                    <label>End Date (leave blank if current)</label>
+                    <input type="month" class="exp-end">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="exp-current"> Current Position
+                    </label>
+                </div>
+                <div class="form-group full-width">
+                    <label>Description (use bullet points)</label>
+                    <textarea class="exp-desc" rows="3" placeholder="• Developed key features&#10;• Led team of 5 developers&#10;• Improved performance by 40%"></textarea>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="educationFormTemplate">
+        <div class="dynamic-item" data-id="{id}">
+            <div class="item-header">
+                <span>Education #{num}</span>
+                <button type="button" class="btn-remove" onclick="app.removeItem('education', {id})">🗑️</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Degree/Certificate</label>
+                    <input type="text" class="edu-degree" placeholder="Bachelor of Science in Computer Science">
+                </div>
+                <div class="form-group">
+                    <label>Institution</label>
+                    <input type="text" class="edu-school" placeholder="Stanford University">
+                </div>
+                <div class="form-group">
+                    <label>Graduation Year</label>
+                    <input type="month" class="edu-date">
+                </div>
+                <div class="form-group">
+                    <label>GPA (optional)</label>
+                    <input type="text" class="edu-gpa" placeholder="3.8/4.0">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="projectFormTemplate">
+        <div class="dynamic-item" data-id="{id}">
+            <div class="item-header">
+                <span>Project #{num}</span>
+                <button type="button" class="btn-remove" onclick="app.removeItem('projects', {id})">🗑️</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" class="proj-name" placeholder="E-Commerce Platform">
+                </div>
+                <div class="form-group">
+                    <label>Technologies Used</label>
+                    <input type="text" class="proj-tech" placeholder="React, Node.js, MongoDB">
+                </div>
+                <div class="form-group full-width">
+                    <label>Project URL (optional)</label>
+                    <input type="url" class="proj-url" placeholder="https://github.com/username/project">
+                </div>
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea class="proj-desc" rows="3" placeholder="Describe your project, challenges faced, and outcomes..."></textarea>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="certificationFormTemplate">
+        <div class="dynamic-item" data-id="{id}">
+            <div class="item-header">
+                <span>Certification #{num}</span>
+                <button type="button" class="btn-remove" onclick="app.removeItem('certifications', {id})">🗑️</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Certification Name</label>
+                    <input type="text" class="cert-name" placeholder="AWS Solutions Architect">
+                </div>
+                <div class="form-group">
+                    <label>Issuing Organization</label>
+                    <input type="text" class="cert-org" placeholder="Amazon Web Services">
+                </div>
+                <div class="form-group">
+                    <label>Date Obtained</label>
+                    <input type="month" class="cert-date">
+                </div>
+                <div class="form-group">
+                    <label>Credential ID (optional)</label>
+                    <input type="text" class="cert-id" placeholder="AWS-123456">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
