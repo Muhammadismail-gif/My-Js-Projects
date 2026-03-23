@@ -6,9 +6,8 @@ A modern, feature-rich web application for searching and analyzing GitHub user p
 
 ## 🚀 Live Demo
 
-[View Live Demo](./GitHub Profile Search/index.html)
+[View Live Demo](https://my-js-projects-dun.vercel.app/GitHub%20Profile%20Search/index.html)
 
----
 
 ## ✨ Features
 
@@ -41,7 +40,6 @@ A modern, feature-rich web application for searching and analyzing GitHub user p
 - **Toast Notifications** - Non-intrusive feedback for user actions
 - **Rate Limit Display** - Real-time API quota monitoring
 
----
 
 ## 🛠️ Tech Stack
 
@@ -54,7 +52,7 @@ A modern, feature-rich web application for searching and analyzing GitHub user p
 | **Storage** | LocalStorage API |
 | **Icons** | Emoji + SVG |
 
----
+
 
 ## 📦 Installation
 
