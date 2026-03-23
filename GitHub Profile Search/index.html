@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Explorer | Profile Search & Analytics</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐙</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🐙</span>
+                <h1>GitHub<span class="highlight">Explorer</span></h1>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span id="rate-limit">60</span>
+                    <small>API calls left</small>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search GitHub username (e.g., facebook, google, microsoft)..."
+                        autocomplete="off"
+                    >
+                    <button id="search-btn" class="btn btn-primary">Search</button>
+                </div>
+                <div class="search-suggestions">
+                    <span>Try:</span>
+                    <button class="suggestion-chip" data-user="torvalds">torvalds</button>
+                    <button class="suggestion-chip" data-user="facebook">facebook</button>
+                    <button class="suggestion-chip" data-user="google">google</button>
+                    <button class="suggestion-chip" data-user="microsoft">microsoft</button>
+                    <button class="suggestion-chip" data-user="vercel">vercel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Fetching profile data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error hidden">
+            <span class="error-icon">❌</span>
+            <h3>User not found</h3>
+            <p>Please check the username and try again.</p>
+        </div>
+
+        <!-- Results Container -->
+        <main id="results" class="results hidden">
+            <!-- Profile Header -->
+            <section class="profile-header">
+                <div class="profile-avatar">
+                    <img id="avatar" src="" alt="Profile">
+                    <div class="avatar-badge" id="hireable-badge">Hireable</div>
+                </div>
+                <div class="profile-info">
+                    <h2 id="name">Name</h2>
+                    <p id="username" class="username">@username</p>
+                    <p id="bio" class="bio">Bio goes here...</p>
+                    
+                    <div class="profile-meta">
+                        <span id="location">📍 Location</span>
+                        <span id="company">🏢 Company</span>
+                        <span id="blog">🔗 Website</span>
+                        <span id="twitter">🐦 Twitter</span>
+                    </div>
+
+                    <div class="profile-dates">
+                        <span id="created">Joined: Date</span>
+                        <span id="updated">Updated: Date</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a id="profile-link" href="#" target="_blank" class="btn btn-primary">View on GitHub</a>
+                    <button id="save-user" class="btn btn-secondary">⭐ Save</button>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-content">
+                        <h3 id="repos-count">0</h3>
+                        <p>Public Repos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3 id="followers-count">0</h3>
+                        <p>Followers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">➡️</div>
+                    <div class="stat-content">
+                        <h3 id="following-count">0</h3>
+                        <p>Following</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <h3 id="stars-count">0</h3>
+                        <p>Total Stars</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <div class="chart-container">
+                    <h3>Language Distribution</h3>
+                    <canvas id="languageChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Repository Stats</h3>
+                    <canvas id="repoChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Main Content Grid -->
+            <div class="content-grid">
+                <!-- Repositories -->
+                <section class="repositories-section">
+                    <div class="section-header">
+                        <h3>📁 Repositories</h3>
+                        <div class="filters">
+                            <select id="sort-repos">
+                                <option value="updated">Recently Updated</option>
+                                <option value="stars">Most Stars</option>
+                                <option value="forks">Most Forks</option>
+                                <option value="name">Name (A-Z)</option>
+                            </select>
+                            <input type="text" id="filter-repos" placeholder="Filter repositories...">
+                        </div>
+                    </div>
+                    <div id="repos-list" class="repos-list">
+                        <!-- Repositories injected here -->
+                    </div>
+                    <button id="load-more" class="btn btn-secondary btn-full">Load More</button>
+                </section>
+
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <!-- Recent Activity -->
+                    <div class="sidebar-section">
+                        <h3>📊 Contribution Graph</h3>
+                        <div id="contribution-graph" class="contribution-graph">
+                            <!-- Generated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Top Languages -->
+                    <div class="sidebar-section">
+                        <h3>🔥 Top Languages</h3>
+                        <ul id="top-languages" class="top-languages">
+                            <!-- Injected dynamically -->
+                        </ul>
+                    </div>
+
+                    <!-- Recent Events -->
+                    <div class="sidebar-section">
+                        <h3>📈 Recent Activity</h3>
+                        <div id="recent-activity" class="activity-list">
+                            <!-- Activity injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Saved Users -->
+                    <div class="sidebar-section">
+                        <h3>⭐ Saved Profiles</h3>
+                        <div id="saved-users" class="saved-users">
+                            <p class="empty">No saved profiles yet</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Built with ❤️ using GitHub API | Rate limit: 60 requests/hour</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
