@@ -6,7 +6,7 @@ A modern, feature-rich web application for searching and analyzing GitHub user p
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://your-username.github.io/github-explorer)
+[View Live Demo](./GitHub Profile Search/index.html)
 
 ---
 
