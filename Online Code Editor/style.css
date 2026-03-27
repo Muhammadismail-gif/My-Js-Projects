@@ -1,0 +1,42 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f172a;
+  color: white;
+  overflow: hidden;
+}
+
+/* Header */
+.glass-header {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+/* Buttons */
+.btn {
+  background: #2563eb;
+  padding: 6px 15px;
+  border-radius: 20px;
+  color: white;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  background: #475569;
+  padding: 6px 15px;
+  border-radius: 20px;
+}
+
+/* Layout */
+.editor-pane {
+  flex: 1;
+  border-right: 1px solid #334155;
+}
+
+/* CodeMirror */
+.CodeMirror {
+  height: 100%;
+  font-size: 14px;
+}

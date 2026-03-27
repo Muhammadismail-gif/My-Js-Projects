@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevStudio - Online Code Editor</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Inter&display=swap" rel="stylesheet">
+
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="h-screen flex flex-col">
+
+<!-- Header -->
+<header class="glass-header h-14 flex items-center justify-between px-4">
+  <h1 class="text-white font-bold">DevStudio</h1>
+
+  <div class="flex gap-3">
+    <button id="runBtn" class="btn">Run</button>
+    <button id="resetBtn" class="btn-secondary">Reset</button>
+  </div>
+</header>
+
+<!-- Editors -->
+<div class="flex-1 flex">
+  <div class="editor-pane">
+    <textarea id="html-code"></textarea>
+  </div>
+
+  <div class="editor-pane">
+    <textarea id="css-code"></textarea>
+  </div>
+
+  <div class="editor-pane">
+    <textarea id="js-code"></textarea>
+  </div>
+
+  <!-- Preview -->
+  <iframe id="preview-frame"></iframe>
+</div>
+
+<!-- CodeMirror -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<!-- Your JS -->
+<script src="script.js"></script>
+
+</body>
+</html>
