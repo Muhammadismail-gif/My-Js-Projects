@@ -1,311 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My JavaScript Projects</title>
-  <link rel="shortcut icon" href="./js-brands-solid-full.svg" type="image/x-icon">
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="JavaScript Projects | Vanilla JavaScript Based Projects">
+    <meta name="keywords" content="JavaScript Projects, Word Counter, Songify, Music Player, HTML, CSS, JavaScript, Music, Project">
+    <meta name="author" content="Muhammad Ismail">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Projects | M.Ismail</title>
+    <link rel="shortcut icon" href="./assets/Pictures/site_picture/favicon.svg" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- custom css -->
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-  <header>
-    <h1><i class="fa-brands fa-js"></i> My JavaScript Projects</h1>
-    <p>Here are some of my JavaScript projects showcasing my frontend skills.</p>
 
-  <!-- add a dark/light theme toggle button -->
-    <button id="theme-toggle" class="theme-btn">
-    <i class="fa-solid fa-moon"></i>
-  </button>
+<!-- header section starts -->
+<header>
+    <a href="#" class="logo"> <i class="fab fa-js-square"></i> Projects</a>
+    <div id="menu" class="fas fa-bars"></div>
 
-  </header>
-
-  <main id="projects" class="projects-container">
+    <nav class="navbar">
+        <ul>
+            <li><a class="active" href="#home">home</a></li>
+            <li><a href="#project"> projects</a></li>
+            <li><a href="#basic">Advanced</a></li>
+            <li><a href="#apibased">API based</a></li>
+            <a href="#" class="conbtn">Contact Us</a>
+        </ul>
+    </nav>
     
-    <!-- Project Card 1 -->
+</header>
+<!-- header section ends -->
 
-<div class="project-card fade-in">
-      <h2>Recipe-Finder-App</h2>
-      <p>This application lets a user search for a food ingredient (like "chicken," "broccoli," or "pasta") and displays a list of recipes retrieved from a public recipe database API.</p>
-      <div class="buttons">
-        <a href="./Recipe Finder App/Recipe-Finder-App.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Recipe Finder App" target="_blank" class="btn secondary">Source Code</a>
-      </div>
- </div>
-    <!-- Project Card 2 -->
-    <div class="project-card fade-in">
-      <h2>Calculator App</h2>
-      <p> Simple Calculator which solve basic arithemic Question.</p>
-      <div class="buttons">
-        <a href="./calculator/calculator.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/calculator" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+<!-- home section starts -->
+<section class="home" id="home">
+    <div class="content">
+    <h3>Welcome To JavaScript Projects</h3>
+    <div id="container">
+    <div id="text"></div><div id="cursor"></div>
     </div>
+    <a href="#project" class="btn"><span>get started</span>
+    <i class="fas fa-arrow-circle-right"></i>
+    </a>
+    </div>
+<div class="image">
+    <img src="./assets/site-img/h1.png" alt="project">
+</div>
+</section>
+<!-- home section ends -->
 
-    <!-- Project Card 3 -->
-    <div class="project-card fade-in">
-      <h2>Quiz Game</h2>
-      <p>Interactive multiple-choice quiz built with JavaScript and DOM manipulation.</p>
-      <div class="buttons">
-        <a href="https://quiz-application-9ka7.vercel.app/" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/Quiz-Application/tree/main/Quiz%20Application" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+<!-- project section starts -->
+<section class="project" id="project">
+
+    <h1 class="heading">Simple basic <span>projects</span> build by using JavaScript</h1>
+
+    <div class="box-container" id="projects-container">
+
+        <!-- <div class="box">
+            <img src="./assets/projects-img/percentcalc.PNG" alt="project">
+            <div class="content">
+            <h3>Basic Percentage Calc</h3>
+            <p>percentage and grade calculator based on the marks enter by the user.</p>
+            <div class="btns">
+                <a href="#" class="btn"><i class="fas fa-eye"></i> View</a>
+                <a href="#" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+            </div>
+        </div> -->
+
     </div>
-     
+</section>
+<!-- project section ends -->
+
+<!-- basic projects section starts -->
+<section class="basic" id="basic">
+   
+    <h1 class="heading">Advance <span>projects</span> made using JavaScript</h1>
     
-    <!-- Project Card 4 -->
-      <div class="project-card fade-in">
-      <h2>Weather App</h2>
-      <p>Fetches live weather data using an API and displays temperature and conditions.</p>
-      <div class="buttons">
-        <a href="https://weather-app-delta-two-61.vercel.app" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/Weather-App" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-    
-      <!-- Project Card 5 -->
-      <div class="project-card fade-in">
-      <h2>Random Quote Generator </h2>
-      <p>A <b>Quote Generator</b> that shows a new inspirational quote each time you click a button.</p>
-      <div class="buttons">
-        <a href="./Random-Quotes-Generator/Random-Quotes-Generator.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Random-Quotes-Generator" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+    <div class="box-container">
+    <div class="box">
+        <img src="./assets/Pictures/Projects_Images/Age-cal.png" alt="project">
+        <div class="content">
+        <h3>Age-Calculater</h3>
+        <p>A simple Age Calculater app. In which we Calculate your total Age.</p>
+        <div class="btns">
+            <a href="Basic_Projects/Age-calculator/index.html" class="btn"><i class="fas fa-eye"></i> View</a>
+            <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Age-calculator" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+            </div>
     </div>
 
-       <!-- Project Card 6 -->
-      <div class="project-card fade-in">
-      <h2> Digitial-Clock</h2>
-      <p>A <b>Digital Clock</b> that show real time.</p>
-      <div class="buttons">
-        <a href="./Digitial-clock/index.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Random-Quotes-Generator" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+    <div class="box">
+        <img src="./assets/projects-img/counter.png" alt="project">
+        <div class="content">
+        <h3>Simple Counter | Modern UI</h3>
+        <p>It's a basic counter made using increment and decrement functionality. Also it prevents negative values.</p>
+        <div class="btns">
+            <a href="mini-projects/simplecounter" class="btn"><i class="fas fa-eye"></i> View</a>
+            <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/mini-projects/simplecounter" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+            </div>
     </div>
 
-    <!-- Project Card 7 -->
-     <div class="project-card fade-in">
-      <h2>Analog-Clock</h2>
-      <p>A simple Analog Clock that show Real time.</p>
-      <div class="buttons">
-        <a href="./Analog-clock/Analog-clock.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Analog-clock" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+    <div class="box">
+        <img src="./assets/projects-img/color-switcher.png" alt="project">
+        <div class="content">
+        <h3>Background Color Switcher</h3>
+        <p>It simply switches the background color as user clicks on the button. Colors stored in array.</p>
+        <div class="btns">
+            <a href="mini-projects/bgcolor-switcher" class="btn"><i class="fas fa-eye"></i> View</a>
+            <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/mini-projects/bgcolor-switcher" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+            </div>
     </div>
 
-      <!-- Project Card 8 -->
-     <div class="project-card fade-in">
-      <h2>To-Do App</h2>
-      <p>A simple app to add, edit, and delete tasks using local storage.</p>
-      <div class="buttons">
-        <a href="./To-Do-App/To- Do-App.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/To-Do-App" target="_blank" class="btn secondary">Source Code</a>
-      </div>
+    <div class="box">
+        <img src="./assets/projects-img/emoji-flicker.png" alt="project">
+        <div class="content">
+        <h3>Emoji Flicker | Something Lazy Fun</h3>
+        <p>Flickers the emoji as happy to sad and vice versa as we click on it. Do checkout once.</p>
+        <div class="btns">
+            <a href="mini-projects/emoji-flicker" class="btn"><i class="fas fa-eye"></i> View</a>
+            <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/mini-projects/emoji-flicker" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+            </div>
     </div>
 
-    <!-- Project Card 9 -->
-     <div class="project-card fade-in">
-      <h2>Unit-converter</h2>
-      <p>A simple Unit Converter app. In which we Convert Unit of <b>Weight</b>,<b>Distance</b>,<b>Temperature</b>.</p>
-      <div class="buttons">
-        <a href="./Unit Converter/index.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Unit Converter" target="_blank" class="btn secondary">Source Code</a>
-      </div>
     </div>
-    
-    <!-- Project Card 10 -->
-     <div class="project-card fade-in">
-      <h2>Age-Calculater</h2>
-      <p>A simple Age Calculater app. In which we Calculate your total Age.</p>
-      <div class="buttons">
-        <a href="./Age-calculator/index.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Age-calculator" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
+</section>
+<!-- basic projects section ends -->
 
-    <!-- Project Card 11 -->
-     <div class="project-card fade-in">
-      <h2> Bulb</h2>
-      <p>A simple Bulb which Turn OFF and ON on click on thread.</p>
-      <div class="buttons">
-        <a href="./Bulb/Bulb.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Bulb" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
+<!-- api projects section ends -->
+<section class="apibased" id="apibased">
 
-     <!-- Project Card 12 -->
-     <div class="project-card fade-in">
-      <h2> Random-Password-Generater</h2>
-      <p>A simple Random-Password-Generater which generate you a <b>Strong Password</b>.</p>
-      <div class="buttons">
-        <a href="./Random-Password-Generater.html/Random-password-generater.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Random-Password-Generater" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
+    <h2 class="heading">Projects Based on <span>API</span></h2>
+  
+    <div class="box-container">
 
-      <!-- Project Card 13 -->
-     <div class="project-card fade-in">
-      <h2> Word Scramble Game through javascript</h2>
-      <p>A simple Word Scramble Game through javascript in which we guess a word.</p>
-      <div class="buttons">
-        <a href="./Word Scramble Game through javascript/Word Scramble.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Word Scramble Game through javascript" target="_blank" class="btn secondary">Source Code</a>
+      <div class="box">
+        <img src="./assets/projects-img/countryapi.png" alt="project" />
+        <div class="content">
+          <div class="tag">
+          <h3>Country Search App</h3>
+          </div>
+          <div class="desc">
+            <p>Simple country search app built using HTML, Bootstrap and JavaScript. API Used Rest Countries</p>
+            <div class="btns">
+              <a href="api-projects/country-api" class="btn"><i class="fas fa-eye"></i> View</a>
+              <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/api-projects/country-api" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-      <!-- Project Card 14 -->
-     <div class="project-card fade-in">
-      <h2> Stopwatch</h2>
-      <p>A simple Stopwatch which we stop, lap and Reset the time.</p>
-      <div class="buttons">
-        <a href="./Stopwatch/Stopwatch.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Stopwatch" target="_blank" class="btn secondary">Source Code</a>
+      <div class="box">
+            <img src="./assets/projects-img/weatherapi.png" alt="project" />
+            <div class="content">
+              <div class="tag">
+              <h3>Live Weather App</h3>
+              </div>
+              <div class="desc">
+                <p>It's a simple web page which fetch live weather data of the city entered by the user using open Weather API.</p>
+                <div class="btns">
+                  <a href="api-projects/weatherapi" class="btn"><i class="fas fa-eye"></i> View</a>
+                  <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/api-projects/weatherapi" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+                </div>
+              </div>
+            </div>
+       </div>
+  
+      <div class="box">
+        <img src="./assets/projects-img/gmap-api.png" alt="project" />
+        <div class="content">
+          <div class="tag">
+          <h3>Google Map API</h3>
+          </div>
+          <div class="desc">
+            <p>It's built using Google map API. Points on single location/coordinates. Uses Google Cloud Platform.</p>
+            <div class="btns">
+              <a href="api-projects/googlemapapi" class="btn"><i class="fas fa-eye"></i> View</a>
+              <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/api-projects/googlemapapi" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Project Card 15 -->
-     <div class="project-card fade-in">
-      <h2> Word-Letter-Counter</h2>
-      <p>A simple word and letter counter that updates in real time as you type in a text area. It helps users instantly see how many words and letters their text contains.</p>
-      <div class="buttons">
-        <a href="./Word-Counter/Word-Counter.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Word-Counter" target="_blank" class="btn secondary">Source Code</a>
+  
+      <div class="box">
+        <img src="./assets/projects-img/saas-api.png" alt="project" />
+        <div class="content">
+          <div class="tag">
+          <h3>Job Finder Website</h3>
+          </div>
+          <div class="desc">
+            <p>It fetch dummy JSON data and allow feature to search within the content displayed. It can developed by using live APIs.</p>
+            <div class="btns">
+              <a href="api-projects/saas-jobs" class="btn"><i class="fas fa-eye"></i> View</a>
+              <a href="https://github.com/jigar-sable/JavaScript-Projects/tree/main/api-projects/saas-jobs" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Project Card 15 -->
-     <div class="project-card fade-in">
-      <h2> Mouse-Event</h2>
-      <p>A simple project demonstrates different JavaScript events such as click, hover, drag, and keyboard interactions. It provides a clean and modern UI with real-time event responses.</p>
-      <div class="buttons">
-        <a href="./Mouse-Event/Mouse-Event.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Mouse-Event" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-
-       <!-- Project Card 16 -->
-     <div class="project-card fade-in">
-      <h2> Weather App Interface</h2>
-      <p>A simple weather App interface which weather related information.</p>
-      <div class="buttons">
-        <a href="./Weather App interface/weatherAppInterface.html" target="_blank" class="btn">Live Demo</a>
-        <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Weather App interface" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-
-      <!-- Project Card 17 -->
-     <div class="project-card fade-in">
-      <h2>QR Code Scanner and Generator</h2>
-      <p>A simple QR Code Scanner and Generator built using HTML, CSS, and JavaScript.</p>
-      <div class="buttons">
-        <a href="./QR-code-scanner/QR-Code-scanner.html" target="_blank" class="btn">Live Demo</a>
-         <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/QR-code-scanner" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-
-      <!-- Project Card 18 -->
-     <div class="project-card fade-in">
-      <h2>Chat Interface UI</h2>
-      <p>A simple Chat Interface UI built using HTML, CSS, and JavaScript.</p>
-      <div class="buttons">
-        <a href="./Chat interface UI/index.html" target="_blank" class="btn">Live Demo</a>
-         <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Chat interface UI" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-
-     <!-- project Card 19-->
-      <div class="project-card fade-in">
-        <h2>OMDB Movie Search App</h2>
-        <p>A simple movie search application that uses the OMDB API to fetch and display movie information based on user queries.</p>
-        <div class="buttons">
-          <a href="./OMDB Movie Search App/OMDB Movie Search App.html" target="_blank" class="btn">Live Demo</a>
-            <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/OMDB Movie Search App" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-
-    <!-- Project Card 20 -->
-     <div class="project-card fade-in">
-      <h2> Music player UI </h2>
-      <p>A simple Music Player UI built using HTML, CSS, and JavaScript.</p>
-      <div class="buttons">
-        <a href="./Music Player UI/Music Player UI.html" target="_blank" class="btn">Live Demo</a>
-            <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Music Player UI" target="_blank" class="btn secondary">Source Code</a>
-      </div>
-    </div>
-    
-    <!-- Project Card 21: Real-time Chat App -->
-<div class="project-card fade-in">
-  <h2>ChatStream</h2>
-  <p>Full-stack real-time chat application with WebSocket communication, multiple rooms, private messaging, typing indicators, and responsive design. Built with Node.js, Express, and Socket.io.</p>
-  <div class="buttons">
-    <a href="./Real-time Chat App/public/index.html" target="_blank" class="btn">Live Demo</a>
-    <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Real-time%20Chat%20App" target="_blank" class="btn secondary">Source Code</a>
+  
   </div>
-</div>
-     
-<!-- Project Card 22: Resume Builder Pro -->
-<div class="project-card fade-in">
-  <h2>Resume Builder Pro</h2>
-  <p>A professional resume generator with 4 customizable templates, live preview, dynamic form handling, and PDF export functionality.</p>
-  <div class="buttons">
-    <a href="./Resume Builder Web App/index.html" target="_blank" class="btn">Live Demo</a>
-    <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Resume%20Builder%20Web%20App" target="_blank" class="btn secondary">Source Code</a>
-  </div>
-</div>
+</section>
+<!-- api projects section ends -->
 
-<!-- Project Card 23: Expense Tracker -->
-<div class="project-card fade-in">
-  <h2>Expense Tracker</h2>
-  <p>A fully-featured finance management app with local storage, data visualization, CSV export, and transaction tracking. Built with vanilla JavaScript.</p>
-  <div class="buttons">
-    <a href="./Expense Tracker/index.html" target="_blank" class="btn">Live Demo</a>
-    <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Expense%20Tracker" target="_blank" class="btn secondary">Source Code</a>
-  </div>
-</div>
+<!-- footer strated -->
+<footer class="site-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-sm-6 col-xs-12">
+          <p class="copyright-text">Copyright &copy; 2022 All Rights Reserved | JavaScript Projects <span>Made with <i class="fa fa-heart pulse"></i> by <a href="https://www.linkedin.com/in/jigar-sable/" target="_blank">Jigar</a>
+          </span></p>
+          
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <ul class="social-icons">
+            <li><a class="linkedin" href="https://www.linkedin.com/in/jigar-sable/" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+            <li><a class="twitter" href="https://twitter.com/jigar_sable" target="_blank"><i class="fab fa-twitter"></i></a></li>
+            <li><a class="github" href="https://github.com/jigar-sable" target="_blank"><i class="fab fa-github"></i></a></li> 
+            <li><a class="youtube" href="#" target="_blank"><i class="fab fa-youtube"></i></a></li>
+            <li><a class="instagram" href="https://instagram.com/jigarsable.dev" target="_blank"><i class="fab fa-instagram"></i></a></li> 
+          </ul>
+        </div>
+      </div>
+    </div>
+</footer>
+<!-- footer ended -->
 
+<!-- scroll top btn -->
+<a href="#home" class="fas fa-angle-up" id="scroll-top"></a>
 
-<!-- Project Card 24: GitHub Explorer -->
-<div class="project-card fade-in">
-  <h2>GitHub Explorer</h2>
-  <p>A feature-rich GitHub profile search application with data visualization, repository analytics, and user management using the GitHub REST API.</p>
-  <div class="buttons">
-    <a href="./GitHub Profile Search/index.html" target="_blank" class="btn">Live Demo</a>
-    <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/GitHub%20Profile%20Search" target="_blank" class="btn secondary">Source Code</a>
-  </div>
-</div>
+<!-- jquery cdn -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- custom js -->
+<!-- <script src="./assets/js/projects.js"></script> -->
+<script src="./assets/js/script.js"></script>
 
-<!-- Project Card 25: DevStudio - Online Code Editor -->
-<div class="project-card fade-in">
-  <h2>DevStudio - Online Code Editor</h2>
-  <p>   A modern online code editor that allows users to write and preview HTML, CSS, and JavaScript in real-time with a clean and responsive UI.</p>
-  <div class="buttons">
-    <a href="./Online Code Editor/index.html" target="_blank" class="btn">Live Demo</a>
-    <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Online%20Code%20Editor" target="_blank" class="btn secondary">Source Code</a>
-  </div>
-</div>
-  </main>
-
-  <footer>
-    <p>© 2025 Muhammad Ismail | Built with ❤️ using HTML, CSS, and JavaScript</p>
-  </footer>
-
-  <script src="./Script.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.waves.min.js"></script>
-<script>
-VANTA.WAVES({
-  el: "body",
-  mouseControls: true,
-  touchControls: true,
-  minHeight: 200.00,
-  minWidth: 200.00,
-  scale: 1.00,
-  color: 0xff7a00, // your orange theme
-  shininess: 50.00,
-  waveHeight: 15.00,
-  waveSpeed: 1.0,
-  zoom: 1.0
-})
-</script>
 </body>
 </html>
