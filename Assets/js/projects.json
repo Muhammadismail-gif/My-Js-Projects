@@ -15,29 +15,29 @@
     "meta": "calculator"
   },
   {
-    "name": "Temperature Converter",
-    "desc": "Temperature converter celsius to kelvin and fahrenhiet live.",
-    "meta": "tempconvert"
+    "name": "Digital-clock",
+    "desc": "A Digital Clock that show real time.",
+    "meta": "Digital-clock"
   },
   {
-    "name": "Words Counter",
-    "desc": "Words and character counter. Live Counter JavaScript Project.",
-    "meta": "wordcount"
+    "name": "Words-Counter",
+    "desc": "A simple word and letter counter that updates in real time as you type in a text area. It helps users instantly see how many words and letters their text contains.",
+    "meta": "words-Counter"
   },
   {
-    "name": "Simple Stopwatch",
-    "desc": "Simple stopwatch with start, stop and reset features.",
+    "name": "Stopwatch",
+    "desc": "A simple Stopwatch which we stop, lap and Reset the time.",
     "meta": "stopwatch"
   },
   {
-    "name": "Basic Percentage Calc",
-    "desc": "Percentage And Grade Calculator Based On The Marks Enter By The User.",
-    "meta": "percentcalc"
+    "name": "Word Scramble Game",
+    "desc": "A simple Word Scramble Game through javascript in which we guess a word.",
+    "meta": "Word Scramble Game"
   },
   {
-    "name": "Simple Calculator",
-    "desc": "Simple Operations Calculator Based On The Two User Inputs.",
-    "meta": "twonumcalc"
+    "name": "To-Do-App",
+    "desc": "A simple app to add, edit, and delete tasks using local storage.",
+    "meta": "To-Do-App"
   },
   {
     "name": "Todo List",
