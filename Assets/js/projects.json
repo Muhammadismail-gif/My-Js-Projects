@@ -40,33 +40,33 @@
     "meta": "To-Do-App"
   },
   {
-    "name": "Todo List",
-    "desc": "Simple Todo List Webapp With Modern UI And Glassmorphism.",
-    "meta": "todo"
+    "name": "Random-Password-Generater",
+    "desc": "simple Random-Password-Generater which generate you a Strong Password.",
+    "meta": "Random-Password-Generater"
   },
   {
-    "name": "Age Calculator",
-    "desc": "Calculates The Age Of The User. Wishes Too On Birthday.",
-    "meta": "agecalc"
+    "name": "Random-Quotes-Generator",
+    "desc": "A Quote Generator that shows a new inspirational quote each time you click a button.",
+    "meta": "Random-Quotes-Generator"
   },
   {
-    "name": "Password Generator",
-    "desc": "A Basic Password Generator As Per The User Selected Criteria.",
-    "meta": "pwdgen"
+    "name": "QR-code-Generater",
+    "desc": "A Basic QR Code Generator.",
+    "meta": "QR-code-Generater"
   },
   {
-    "name": "Issue Tracker",
-    "desc": "Assign Issue With The Auto Generated Id By Using ChanceJS. Uses LocalStorage.",
-    "meta": "issuetracker"
+    "name": "Music Player Ui",
+    "desc": "A simple Music Player UI built using HTML, CSS, and JavaScript",
+    "meta": "Music Player Ui"
   },
   {
-    "name": "Simple Calculator",
-    "desc": "A Simple Caculator Built Using JQuery.",
-    "meta": "basic-calc"
+    "name": "Mouse-Event",
+    "desc": "A simple project demonstrates different JavaScript events such as click, hover, drag, and keyboard interactions. It provides a clean and modern UI with real-time event responses.",
+    "meta": "Mouse-Event"
   },
   {
-    "name": "Neomorphism Clock",
-    "desc": "Basic Neomorphism Clock With Hour, Min, Sec With Light And Dark Mode. Tilt Effect.",
-    "meta": "neoclock"
+    "name": "Bulb",
+    "desc": "A simple Bulb which Turn OFF and ON on click on thread.",
+    "meta": "Bulb"
   }
 ]
