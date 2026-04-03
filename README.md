@@ -35,7 +35,7 @@ This repository includes:
 
 - 🎮 Basic Projects 
 - 🧮 api Projects 
-- 📋 Mini Projects  
+- 📋 Advance Projects  
 - ⏱️ Clocks & Timers  
 - 🎨 UI Components  
 

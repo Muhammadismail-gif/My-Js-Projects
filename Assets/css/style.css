@@ -201,24 +201,6 @@ header a.conbtn:hover {
   margin-bottom: 2rem;
 }
 
-#cursor {
-  display: inline-block;
-  vertical-align: center;
-  width: 3px;
-  height: 3rem;
-  background-color: orange;
-  animation: blink 0.75s step-end infinite;
-}
-
-@keyframes blink {
-  from,
-  to {
-    background-color: transparent;
-  }
-  50% {
-    background-color: orange;
-  }
-}
 /* hero end */
 
 /* project section starts */
