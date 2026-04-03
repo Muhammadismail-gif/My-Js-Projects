@@ -43,7 +43,7 @@ $(document).ready(function () {
 const projectsContainer = document.getElementById('projects-container');
 let project = '';
 
-fetch('./assets/js/projects.json')
+fetch('./Assets/js/projects.json')
     .then(res => res.json())
     .then(projects => {
         // console.log(projects);

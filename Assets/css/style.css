@@ -1015,11 +1015,9 @@ header a.conbtn:hover::before {
 
 /* Footer Made with Love */
 .site-footer span {
-  color: var(--gray-500);
-  font-size: 1.4rem;
   display: block;
   position: absolute;
-  left: 50%;
+  left: 66%;
   bottom: var(--space-lg);
   transform: translateX(-50%);
   text-align: center;
@@ -1051,9 +1049,8 @@ header a.conbtn:hover::before {
   75% { transform: scale(1.1); }
 }
 
-/* ============================================
-   SOCIAL ICONS
-   ============================================ */
+   /* SOCIAL ICONS */
+  
 .social-icons {
   padding-left: 0;
   margin-bottom: 0;
@@ -1130,9 +1127,8 @@ header a.conbtn:hover::before {
   background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
-/* ============================================
-   SCROLL TO TOP BUTTON
-   ============================================ */
+   /* SCROLL TO TOP BUTTON */
+   
 #scroll-top {
   position: fixed;
   bottom: 3rem;
@@ -1165,9 +1161,8 @@ header a.conbtn:hover::before {
   background: var(--primary-dark);
 }
 
-/* ============================================
-   MEDIA QUERIES - RESPONSIVE DESIGN
-   ============================================ */
+   /* MEDIA QUERIES - RESPONSIVE DESIGN */
+
 @media (max-width: 1200px) {
   html {
     font-size: 58%;
