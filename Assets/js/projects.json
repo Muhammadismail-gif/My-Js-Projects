@@ -22,7 +22,7 @@
   {
     "name": "Words-Counter",
     "desc": "A simple word and letter counter that updates in real time as you type in a text area. It helps users instantly see how many words and letters their text contains.",
-    "meta": "words-Counter"
+    "meta": "Words-Counter"
   },
   {
     "name": "Stopwatch",
