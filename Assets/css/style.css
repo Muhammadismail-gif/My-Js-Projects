@@ -927,41 +927,176 @@ header a.conbtn:hover::before {
   line-height: 1.7;
 }
 
-.apibased .desc .btns {
+   /* API BASED SECTION - */
+
+.apibased {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  min-height: 70vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.apibased .heading {
+  text-align: center;
+  padding: 2rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.apibased .box-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 2rem 0;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.apibased .box-container .box {
+  flex: 1 1 30rem;
+  max-width: 35rem;
+  border-radius: 1.5rem;
+  border: none;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  height: 32rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.apibased .box-container .box img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: all 0.5s ease;
+  display: block;
+}
+
+/* FIXED: Content slides up from bottom */
+.apibased .box-container .box .content {
+  height: auto;
+  min-height: 60%;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  transform: translateY(75%);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  z-index: 2;
+  border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Tag header always visible at top of content */
+.apibased .box-container .box .content .tag {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 5rem;
+  width: 100%;
+  padding: 0 1.5rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  border-radius: 1.5rem 1.5rem 0 0;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.apibased .box-container .box .content .tag h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Description area */
+.apibased .box-container .box .content .desc {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  gap: 1.5rem;
+}
+
+.apibased .box-container .box .content .desc p {
+  font-size: 1.5rem;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* FIXED: Buttons - now properly clickable */
+.apibased .box-container .box .content .desc .btns {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-top: var(--space-md);
-  gap: var(--space-sm);
+  gap: 1rem;
+  margin-top: auto;
 }
 
-.apibased .desc .btns .btn {
+.apibased .box-container .box .content .desc .btns .btn {
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 1.4rem 2rem;
-  border-radius: var(--radius-lg);
+  border-radius: 0.75rem;
   font-size: 1.5rem;
-  color: var(--light);
-  background: var(--gradient-primary);
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   font-weight: 600;
-  transition: var(--transition-base);
+  transition: all 0.3s ease;
   border: 2px solid transparent;
   flex: 1;
   gap: 0.8rem;
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+  text-decoration: none;
+  pointer-events: auto;
 }
 
-.apibased .desc .btns .btn:hover {
-  background: var(--primary-dark);
+.apibased .box-container .box .content .desc .btns .btn:hover {
+  background: #4f46e5;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* ============================================
-   FOOTER
-   ============================================ */
+/* Hover effects */
+.apibased .box-container .box:hover {
+  transform: translateY(-1rem);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 0 20px rgba(99, 102, 241, 0.3);
+  z-index: 5;
+}
+
+.apibased .box-container .box:hover img {
+  transform: scale(1.1);
+  filter: brightness(0.8);
+}
+
+/* FIXED: Slide up on hover to reveal buttons */
+.apibased .box-container .box:hover .content {
+  transform: translateY(0);
+}
+
+.apibased .box-container .box:hover .content .tag {
+  background: #0f172a;
+}
+
+   /* FOOTER */
+
 .site-footer {
   background: var(--dark);
   padding: var(--space-2xl) 0 var(--space-lg);
