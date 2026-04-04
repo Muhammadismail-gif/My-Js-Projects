@@ -24,9 +24,7 @@ This repository showcases my journey of learning and building real-world mini ap
 
 ## 👀 Sneak Peek
 
-![Preview](https://via.placeholder.com/1000x500?text=Project+Preview)
-
-*(Replace this image with your actual project screenshot)*
+![Preview](./Assets/Pictures/site_picture/Project-Frontened.png)
 
 
 ## 📂 Project Types

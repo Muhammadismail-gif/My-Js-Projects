@@ -300,9 +300,7 @@ header a.conbtn:hover::before {
   left: 100%;
 }
 
-/* ============================================
-   HERO SECTION
-   ============================================ */
+/*HERO SECTION*/
 .home {
   display: flex;
   flex-wrap: wrap;
@@ -357,11 +355,17 @@ header a.conbtn:hover::before {
 }
 
 .home .image img {
-  width: 90%;
-  padding: var(--space-md);
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 20px 40px rgba(99, 102, 241, 0.3));
-  transition: var(--transition-slow);
+   height: 100%;
+   width: 100%;
+   padding: var(--space-md);
+   animation: float 6s ease-in-out infinite;
+   filter: drop-shadow(0 20px 40px rgba(99, 102, 241, 0.3));
+   transition: var(--transition-slow);
+   border-radius: 3rem;
+   -webkit-border-radius: 3rem;
+   -moz-border-radius: 3rem;
+   -ms-border-radius: 3rem;
+   -o-border-radius: 3rem;
 }
 
 .home .image img:hover {
