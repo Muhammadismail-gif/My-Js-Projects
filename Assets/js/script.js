@@ -52,7 +52,7 @@ fetch('./Assets/js/projects.json')
             // console.log(proj);
             project += `
     <div class="box">
-        <img src="./Assets/Pictures/Projects_images/${proj.meta}.png" alt="project">
+        <img src="./Assets/Pictures/Projects_Images/${proj.meta}.png" alt="project">
         <div class="content">
         <h3>${proj.name}</h3>
         <p>${proj.desc}</p>
