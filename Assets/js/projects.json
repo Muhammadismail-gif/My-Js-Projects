@@ -27,7 +27,7 @@
   {
     "name": "Stopwatch",
     "desc": "A simple Stopwatch which we stop, lap and Reset the time.",
-    "meta": "stopwatch"
+    "meta": "Stopwatch"
   },
   {
     "name": "Word Scramble Game",

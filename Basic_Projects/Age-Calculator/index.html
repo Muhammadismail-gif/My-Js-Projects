@@ -1,23 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Age Calculator</title>
+    <meta name="description" content="Professional Age Calculator - Calculate exact age, next birthday countdown, and total days lived">
+    <title>Age Calculator Pro | Portfolio Project</title>
+    
+    <!-- Favicon -->
     <link rel="shortcut icon" href="./calculator-solid-full.svg" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <h2>Age Calculator</h2>
-        <label for="dob">Enter Your Date of Birth:</label>
-        <input type="date" id="dob">
-        <button onclick="calculateAge()">Calculate Age</button>
-        <p id="result"></p>
+    <!-- Background decoration -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Main container -->
+    <main class="app-container">
+        
+        <!-- Header with theme toggle -->
+        <header class="app-header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="logo-text">AgeCalc Pro</span>
+            </div>
+            
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </header>
 
+        <!-- Calculator Card -->
+        <section class="calculator-card">
+            <div class="card-header">
+                <h1 class="card-title">Calculate Your Age</h1>
+                <p class="card-subtitle">Enter your birth date to discover your exact age</p>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-group">
+                <label for="dob" class="input-label">
+                    Date of Birth
+                    <span class="required">*</span>
+                </label>
+                <div class="input-wrapper">
+                    <input 
+                        type="date" 
+                        id="dob" 
+                        class="date-input" 
+                        required
+                        aria-describedby="dob-error"
+                        max=""
+                    >
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <span class="error-message" id="dob-error" role="alert"></span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button class="btn btn-primary" id="calculateBtn">
+                    <span class="btn-text">Calculate Age</span>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <div class="spinner hidden"></div>
+                </button>
+                
+                <button class="btn btn-secondary hidden" id="resetBtn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    <span class="btn-text">Reset</span>
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-container hidden" id="results">
+                
+                <!-- Main Age Display -->
+                <div class="age-display">
+                    <div class="age-item">
+                        <span class="age-number" id="years">0</span>
+                        <span class="age-label">Years</span>
+                    </div>
+                    <div class="age-separator">:</div>
+                    <div class="age-item">
+                        <span class="age-number" id="months">0</span>
+                        <span class="age-label">Months</span>
+                    </div>
+                    <div class="age-separator">:</div>
+                    <div class="age-item">
+                        <span class="age-number" id="days">0</span>
+                        <span class="age-label">Days</span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="totalDays">0</span>
+                            <span class="stat-label">Total Days Lived</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card highlight">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="nextBirthday">0</span>
+                            <span class="stat-label">Days Until Birthday</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fun Fact -->
+                <div class="fun-fact" id="funFact">
+                    <span class="fact-icon">💡</span>
+                    <p class="fact-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about-section">
+            <details class="about-details">
+                <summary class="about-summary">
+                    <span>About this project</span>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </summary>
+                <div class="about-content">
+                    <p>This Age Calculator is a portfolio project demonstrating modern web development practices including:</p>
+                    <ul class="feature-list">
+                        <li>Responsive design with CSS Grid and Flexbox</li>
+                        <li>Dark/Light theme toggle with CSS variables</li>
+                        <li>Smooth animations and micro-interactions</li>
+                        <li>Accessible form validation</li>
+                        <li>Modular JavaScript architecture</li>
+                    </ul>
+                    <div class="tech-stack">
+                        <span class="tech-badge">HTML5</span>
+                        <span class="tech-badge">CSS3</span>
+                        <span class="tech-badge">JavaScript ES6+</span>
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Built By M.ismail</p>
+        </footer>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
