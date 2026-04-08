@@ -1,259 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glass Music Player V2</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #141e30, #243b55);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-    }
-
-    .player-container {
-      width: 380px;
-      backdrop-filter: blur(18px);
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 25px;
-      padding: 25px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .cover {
-      width: 100%;
-      height: 240px;
-      border-radius: 18px;
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .artist {
-      font-size: 14px;
-      color: #ddd;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin: 20px 0;
-    }
-
-    .btn {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid rgba(255,255,255,0.25);
-      cursor: pointer;
-      user-select: none;
-      transition: 0.3s;
-      font-size: 18px;
-    }
-
-    .btn:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 15px;
-    }
-
-    .progress {
-      width: 0%;
-      height: 100%;
-      background: #1db954;
-      border-radius: 5px;
-    }
-
-    .volume-box {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    input[type=range] {
-      width: 100%;
-    }
-
-    .playlist {
-      margin-top: 25px;
-      max-height: 180px;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
-
-    .song-item {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .song-item:hover {
-      background: rgba(255,255,255,0.1);
-    }
-
-    .waveform {
-      width: 100%;
-      height: 60px;
-      margin-top: 15px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Music Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Hidden Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
 
-<div class="player-container">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/>
+                </svg>
+                <span>Flow</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <h3>Menu</h3>
+                    <a href="#" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Home
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Search
+                    </a>
+                    <a href="#" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                        </svg>
+                        Library
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <h3>Playlists</h3>
+                    <a href="#" class="nav-item">
+                        <div class="playlist-icon liked">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </div>
+                        Liked Songs
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="playlist-icon">🎸</div>
+                        Rock Classics
+                    </a>
+                    <a href="#" class="nav-item">
+                        <div class="playlist-icon">🎹</div>
+                        Jazz Vibes
+                    </a>
+                </div>
+            </nav>
+        </aside>
 
-  <div class="cover" id="cover"></div>
-  <div class="title" id="title">Song Title</div>
-  <div class="artist" id="artist">Artist Name</div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Search for songs, artists...">
+                </div>
+                <div class="user-menu">
+                    <button class="btn-upgrade">Upgrade</button>
+                    <div class="user-avatar">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User">
+                    </div>
+                </div>
+            </header>
 
-  <div class="progress-bar" id="progressBar">
-    <div class="progress" id="progress"></div>
-  </div>
+            <div class="content-scroll">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <div class="hero-bg"></div>
+                    <div class="hero-content">
+                        <span class="badge">Featured Album</span>
+                        <h1>Midnight Horizons</h1>
+                        <p class="artist">The Weeknd • 2024 • 12 songs</p>
+                        <p class="description">Experience the new era of sound with this groundbreaking album that redefines modern R&B.</p>
+                        <div class="hero-actions">
+                            <button class="btn-play" id="heroPlayBtn">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"/>
+                                </svg>
+                                <span>Play Now</span>
+                            </button>
+                            <button class="btn-secondary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                Save
+                            </button>
+                            <button class="btn-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=400&h=400&fit=crop" alt="Album Cover">
+                    </div>
+                </section>
 
-  <canvas class="waveform" id="waveCanvas"></canvas>
+                <!-- Recently Played -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2>Recently Played</h2>
+                        <a href="#" class="see-all">See all</a>
+                    </div>
+                    <div class="card-grid" id="recentGrid"></div>
+                </section>
 
-  <div class="controls">
-    <div class="btn" onclick="prevSong()">⏮</div>
-    <div class="btn" id="playBtn" onclick="togglePlay()">▶</div>
-    <div class="btn" onclick="nextSong()">⏭</div>
-  </div>
+                <!-- Trending -->
+                <section class="section">
+                    <div class="section-header">
+                        <h2>Trending Now</h2>
+                        <a href="#" class="see-all">See all</a>
+                    </div>
+                    <div class="card-grid" id="trendingGrid"></div>
+                </section>
+            </div>
+        </main>
+    </div>
 
-  <div class="volume-box">
-    🔊 <input type="range" min="0" max="1" step="0.01" id="volumeSlider" />
-  </div>
+    <!-- Player Bar -->
+    <div class="player-bar">
+        <div class="player-section track-info">
+            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop" alt="Current Track" class="track-thumb" id="playerThumb">
+            <div class="track-details">
+                <h4 class="track-title" id="playerTitle">Blinding Lights</h4>
+                <p class="track-artist" id="playerArtist">The Weeknd</p>
+            </div>
+            <button class="btn-like" id="likeBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </button>
+        </div>
 
-  <div class="playlist" id="playlist"></div>
+        <div class="player-section controls">
+            <div class="control-buttons">
+                <button class="control-btn shuffle" id="shuffleBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"/>
+                        <line x1="4" y1="20" x2="21" y2="3"/>
+                        <polyline points="21 16 21 21 16 21"/>
+                        <line x1="15" y1="15" x2="21" y2="21"/>
+                        <line x1="4" y1="4" x2="9" y2="9"/>
+                    </svg>
+                </button>
+                <button class="control-btn prev" id="prevBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 20L9 12l10-8v16zM5 19h2V5H5v14z"/>
+                    </svg>
+                </button>
+                <button class="control-btn play-pause" id="playPauseBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="pause-icon hidden">
+                        <rect x="6" y="4" width="4" height="16"/>
+                        <rect x="14" y="4" width="4" height="16"/>
+                    </svg>
+                </button>
+                <button class="control-btn next" id="nextBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5 4l10 8-10 8V4zM19 5h-2v14h2V5z"/>
+                    </svg>
+                </button>
+                <button class="control-btn repeat" id="repeatBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="17 1 21 5 17 9"/>
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                        <polyline points="7 23 3 19 7 15"/>
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="progress-container">
+                <span class="time current" id="currentTime">0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    <div class="progress-handle" id="progressHandle" style="left: 0%"></div>
+                </div>
+                <span class="time total" id="totalTime">0:00</span>
+            </div>
+        </div>
 
-  <audio id="audio"></audio>
-</div>
+        <div class="player-section extra-controls">
+            <button class="control-btn lyrics">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18V5l12-2v13"/>
+                    <circle cx="6" cy="18" r="3"/>
+                    <circle cx="18" cy="16" r="3"/>
+                </svg>
+            </button>
+            <button class="control-btn queue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"/>
+                    <line x1="8" y1="12" x2="21" y2="12"/>
+                    <line x1="8" y1="18" x2="21" y2="18"/>
+                    <line x1="3" y1="6" x2="3.01" y2="6"/>
+                    <line x1="3" y1="12" x2="3.01" y2="12"/>
+                    <line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+            </button>
+            <div class="volume-control">
+                <button class="control-btn volume" id="muteBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="volumeIcon">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                </button>
+                <div class="volume-slider" id="volumeSlider">
+                    <div class="volume-fill" id="volumeFill" style="width: 70%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script>
-  const audio = document.getElementById("audio");
-  const playBtn = document.getElementById("playBtn");
-  const progress = document.getElementById("progress");
-  const progressBar = document.getElementById("progressBar");
-  const canvas = document.getElementById("waveCanvas");
-  const ctx = canvas.getContext("2d");
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>Loading audio...</p>
+    </div>
 
-  const songs = [
-    { title: "Dreams", artist: "Unknown", src: "song1.mp3", cover: "https://i.imgur.com/8Km9tLL.jpg" },
-    { title: "Skyfall", artist: "Unknown", src: "song2.mp3", cover: "https://i.imgur.com/7rlJw4j.jpg" },
-    { title: "Waves", artist: "Unknown", src: "song3.mp3", cover: "https://i.imgur.com/YoKD9Yg.jpeg" }
-  ];
-
-  let index = 0;
-
-  function loadSong(i) {
-    const s = songs[i];
-    document.getElementById("title").textContent = s.title;
-    document.getElementById("artist").textContent = s.artist;
-    document.getElementById("cover").style.backgroundImage = `url(${s.cover})`;
-
-    audio.src = s.src;
-    drawWaveform();
-  }
-
-  loadSong(index);
-
-  function togglePlay() {
-    if (audio.paused) {
-      audio.play();
-      playBtn.textContent = "⏸";
-    } else {
-      audio.pause();
-      playBtn.textContent = "▶";
-    }
-  }
-
-  function nextSong() {
-    index = (index + 1) % songs.length;
-    loadSong(index);
-    audio.play();
-    playBtn.textContent = "⏸";
-  }
-
-  function prevSong() {
-    index = (index - 1 + songs.length) % songs.length;
-    loadSong(index);
-    audio.play();
-    playBtn.textContent = "⏸";
-  }
-
-  audio.addEventListener("timeupdate", () => {
-    if (audio.duration) {
-      progress.style.width = (audio.currentTime / audio.duration) * 100 + "%";
-    }
-  });
-
-  progressBar.addEventListener("click", (event) => {
-    const rect = progressBar.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const width = rect.width;
-    audio.currentTime = (x / width) * audio.duration;
-  });
-
-  document.getElementById("volumeSlider").addEventListener("input", (e) => {
-    audio.volume = e.target.value;
-  });
-
-  const playlistDiv = document.getElementById("playlist");
-  songs.forEach((s, i) => {
-    const div = document.createElement("div");
-    div.className = "song-item";
-    div.textContent = s.title + " - " + s.artist;
-    div.onclick = () => {
-      index = i;
-      loadSong(i);
-      audio.play();
-      playBtn.textContent = "⏸";
-    };
-    playlistDiv.appendChild(div);
-  });
-
-  function drawWaveform() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#1db954";
-
-    for (let i = 0; i < 50; i++) {
-      const barHeight = Math.random() * 50;
-      const barWidth = 6;
-      ctx.fillRect(i * 7, 60 - barHeight, barWidth, barHeight);
-    }
-  }
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
