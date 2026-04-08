@@ -55,11 +55,6 @@
     "meta": "QR-code-Generater"
   },
   {
-    "name": "Music Player Ui",
-    "desc": "A simple Music Player UI built using HTML, CSS, and JavaScript",
-    "meta": "Music Player Ui"
-  },
-  {
     "name": "Mouse-Event",
     "desc": "A simple project demonstrates different JavaScript events such as click, hover, drag, and keyboard interactions. It provides a clean and modern UI with real-time event responses.",
     "meta": "Mouse-Event"
