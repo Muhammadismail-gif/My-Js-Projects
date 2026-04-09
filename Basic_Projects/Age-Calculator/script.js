@@ -1,16 +1,3 @@
-/*
-  Age Calculator Pro
-  A modern, accessible age calculator with theme support
-  
-  Features:
-  - Exact age calculation (years, months, days)
-  - Next birthday countdown
-  - Total days lived
-  - Dark/Light theme toggle
-  - Form validation
-  - Smooth animations
- */
-
 // CONFIGURATION & STATE
 
 const AppState = {

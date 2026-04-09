@@ -487,9 +487,7 @@ header a.conbtn:hover::before {
   51%, 100% { opacity: 0; }
 }
 
-/* ============================================
-   PROJECT SECTION
-   ============================================ */
+/*PROJECT SECTION*/
 .project {
   background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
   position: relative;
@@ -647,9 +645,7 @@ header a.conbtn:hover::before {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* ============================================
-   BASIC SECTION
-   ============================================ */
+/* BASIC SECTION*/
 .basic {
   background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
   padding-bottom: var(--space-2xl);
@@ -787,9 +783,7 @@ header a.conbtn:hover::before {
   box-shadow: var(--shadow-glow);
 }
 
-/* ============================================
-   API BASED SECTION
-   ============================================ */
+/* API BASED SECTION*/
 .apibased {
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
   min-height: 70vh;
@@ -1570,9 +1564,9 @@ header a.conbtn:hover::before {
   }
 }
 
-/* ============================================
+/* 
    UTILITY ANIMATIONS
-   ============================================ */
+  */
 @keyframes fadeInUp {
   from {
     opacity: 0;

@@ -58,11 +58,11 @@ fetch('./Assets/js/projects.json')
         <p>${proj.desc}</p>
         <div class="btns">
             <a href="Basic_Projects/${proj.meta}" class="btn"><i class="fas fa-eye"></i> View</a>
-            <a href="https://github.com/Muhammadismail-gif/My-Js-Projects/tree/main/Basic_Projects/${proj.meta}" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
+            <a href="https://github.com/MuhammadIsmailTech/My-Js-Projects/tree/main/Basic_Projects/${proj.meta}" class="btn" target="_blank">Code <i class="fas fa-code"></i></a>
         </div>
         </div>
     </div>`;
         });
         projectsContainer.innerHTML = project;
     });
-
+_INTERVAL_VAL = setInterval(Type, 100);
