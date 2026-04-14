@@ -63,5 +63,10 @@
     "name": "Bulb",
     "desc": "A simple Bulb which Turn OFF and ON on click on thread.",
     "meta": "Bulb"
+  },
+  {
+   "name": "OSI-Model",
+  "desc": "Interactive 7-layer OSI Model visualization showing how data packets travel through Application, Presentation, Session, Transport, Network, Data Link, and Physical layers with encapsulation animation, reverse decoding, and dynamic protocol information.",
+  "meta": "OSI-Model"
   }
 ]

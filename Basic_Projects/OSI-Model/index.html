@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OSI Model — 7-Layer Visualization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #080e1a;
+      --fg: #e4eaf2;
+      --muted: #5e7189;
+      --accent: #00ffd5;
+      --accent-dim: rgba(0,255,213,0.12);
+      --card: #0f1928;
+      --card-raised: #131f33;
+      --border: #1a2e4a;
+      --depth-side: 24px;
+      --depth-bottom: 13px;
+      --skew: -32deg;
+      --layer-h: 68px;
+      --layer-gap: 6px;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #bgCanvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(26,46,74,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,46,74,0.18) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 1.4rem 1rem 0.5rem;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+      font-weight: 800; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #00ffd5 0%, #1ac9b0 40%, #1a8fd7 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      color: var(--muted); font-size: 0.95rem; font-weight: 300;
+      margin-top: 0.15rem; letter-spacing: 0.02em;
+    }
+
+    /* ── Main Layout ── */
+    main {
+      position: relative; z-index: 1;
+      display: flex; gap: 2.5rem;
+      max-width: 1340px;
+      margin: 1rem auto 2rem;
+      padding: 0 1.5rem;
+      align-items: center; justify-content: center;
+    }
+
+    /* ── Visualization ── */
+    .visualization { flex: 0 0 auto; position: relative; }
+
+    .osi-scene { perspective: 1000px; padding: 30px 24px 24px; }
+
+    .osi-stack-wrapper {
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    .osi-stack {
+      position: relative;
+      width: clamp(340px, 36vw, 480px);
+    }
+
+    /* ── Layer Block ── */
+    .layer-block {
+      position: relative;
+      width: 100%; height: var(--layer-h);
+      margin-bottom: var(--layer-gap);
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      outline: none;
+    }
+    .layer-block:last-of-type { margin-bottom: 0; }
+    .layer-block:hover { transform: translateX(6px); filter: brightness(1.14); }
+    .layer-block.active { transform: translateX(8px); filter: brightness(1.25); }
+
+    .layer-top {
+      position: relative; z-index: 3;
+      width: 100%; height: 100%;
+      border-radius: 10px;
+      display: flex; align-items: center;
+      padding: 0 18px; gap: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      transition: box-shadow 0.45s ease, border-color 0.45s ease;
+    }
+    .layer-top::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .layer-block.active .layer-top {
+      border-color: var(--glow, rgba(0,255,213,0.55));
+      box-shadow:
+        0 0 22px var(--glow, rgba(0,255,213,0.3)),
+        0 0 50px var(--glow-dim, rgba(0,255,213,0.1)),
+        inset 0 0 16px rgba(255,255,255,0.04);
+    }
+
+    .l-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem; font-weight: 700;
+      background: rgba(0,0,0,0.32); padding: 3px 10px; border-radius: 5px;
+      color: rgba(255,255,255,0.9); flex-shrink: 0;
+      min-width: 34px; text-align: center;
+    }
+    .l-icon { color: rgba(255,255,255,0.7); font-size: 1rem; flex-shrink: 0; }
+    .l-name { font-weight: 700; font-size: 1rem; color: #fff; white-space: nowrap; letter-spacing: -0.01em; }
+    .l-protos {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; color: rgba(255,255,255,0.4);
+      white-space: nowrap;
+    }
+
+    .layer-right {
+      position: absolute; top: 0; left: 100%;
+      width: var(--depth-side); height: 100%;
+      transform: skewY(var(--skew));
+      transform-origin: top left;
+      z-index: 2; border-radius: 0 7px 7px 0;
+    }
+
+    .layer-bottom {
+      position: absolute; top: 100%; left: 0;
+      width: 100%; height: var(--depth-bottom);
+      transform: skewX(var(--skew));
+      transform-origin: top left;
+      z-index: 1; border-radius: 0 0 7px 7px;
+    }
+
+    /* ── Packet ── */
+    .packet {
+      position: absolute; left: 50%; z-index: 50;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--accent);
+      transform: translateX(-50%);
+      box-shadow: 0 0 16px var(--accent), 0 0 40px var(--accent), 0 0 70px rgba(0,255,213,0.22);
+      opacity: 0; pointer-events: none;
+      transition: top 0.9s cubic-bezier(0.45, 0, 0.12, 1), opacity 0.35s ease;
+    }
+    .packet.visible { opacity: 1; }
+    .packet::before {
+      content: ''; position: absolute; inset: -6px;
+      border-radius: 50%; border: 2px solid var(--accent); opacity: 0.5;
+      animation: pPulse 1.4s ease-in-out infinite;
+    }
+    .packet::after {
+      content: ''; position: absolute; inset: -14px;
+      border-radius: 50%; border: 1px solid var(--accent); opacity: 0.18;
+      animation: pPulse 1.4s ease-in-out infinite 0.35s;
+    }
+    @keyframes pPulse {
+      0%,100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.7); opacity: 0; }
+    }
+    .packet.success {
+      background: #22c55e;
+      box-shadow: 0 0 16px #22c55e, 0 0 40px #22c55e, 0 0 70px rgba(34,197,94,0.22);
+    }
+    .packet.success::before, .packet.success::after {
+      border-color: #22c55e;
+    }
+
+    /* ── Flow Indicator ── */
+    .flow-indicator {
+      position: absolute; right: -60px; top: 50%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .flow-label {
+      font-size: 0.68rem; font-family: 'JetBrains Mono', monospace;
+      color: var(--muted); letter-spacing: 0.05em;
+    }
+    .flow-line {
+      width: 2px; height: 120px; position: relative;
+      background: linear-gradient(to bottom, var(--accent), rgba(0,255,213,0.08));
+      border-radius: 1px;
+    }
+    .flow-line::after {
+      content: ''; position: absolute; bottom: -6px; left: -5px;
+      border-left: 6px solid transparent; border-right: 6px solid transparent;
+      border-top: 8px solid var(--accent);
+    }
+    .flow-line.reverse {
+      background: linear-gradient(to top, #f59e0b, rgba(245,158,11,0.08));
+    }
+    .flow-line.reverse::after {
+      border-top: none; border-bottom: 8px solid #f59e0b; bottom: auto; top: -6px;
+    }
+
+    /* ── Status ── */
+    .status-label {
+      text-align: center; margin-top: 1rem;
+      font-size: 0.88rem; color: var(--muted); min-height: 1.5em;
+      font-family: 'JetBrains Mono', monospace;
+      transition: color 0.3s ease;
+    }
+    .status-label.active { color: var(--accent); }
+    .status-label.reverse-active { color: #f59e0b; }
+
+    /* ── Info Panel ── */
+    .info-panel {
+      flex: 0 0 380px;
+      display: flex; flex-direction: column; gap: 1.1rem;
+    }
+
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.7rem 1.8rem;
+      transition: border-color 0.45s ease, box-shadow 0.45s ease, background 0.45s ease;
+    }
+    .info-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 35px rgba(0,255,213,0.06), inset 0 0 40px rgba(0,255,213,0.015);
+      background: var(--card-raised);
+    }
+    .info-card.reverse-active {
+      border-color: #f59e0b;
+      box-shadow: 0 0 35px rgba(245,158,11,0.06);
+      background: var(--card-raised);
+    }
+
+    .info-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.1rem; }
+    .info-badge {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 1.35rem; color: #fff;
+      background: var(--muted); transition: background 0.4s ease;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .info-title { font-size: 1.3rem; font-weight: 700; transition: color 0.3s ease; letter-spacing: -0.02em; }
+    .info-subtitle {
+      font-size: 0.74rem; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace; margin-top: 2px;
+    }
+
+    .info-desc {
+      font-size: 0.92rem; line-height: 1.7;
+      color: rgba(228,234,242,0.75); margin-bottom: 1.1rem;
+    }
+
+    .proto-section { margin-bottom: 1rem; }
+    .proto-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--muted); margin-bottom: 0.5rem; font-weight: 500;
+    }
+    .proto-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .proto-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      padding: 4px 10px; border-radius: 5px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+      color: rgba(228,234,242,0.6); transition: all 0.3s ease;
+    }
+    .info-card.active .proto-tag {
+      border-color: rgba(0,255,213,0.2); background: rgba(0,255,213,0.05);
+      color: rgba(228,234,242,0.8);
+    }
+    .info-card.reverse-active .proto-tag {
+      border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05);
+      color: rgba(228,234,242,0.8);
+    }
+
+    .pdu-row {
+      display: flex; align-items: center; gap: 10px;
+      padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+    .pdu-label {
+      font-size: 0.68rem; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--muted); font-weight: 500;
+    }
+    .pdu-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--accent); transition: color 0.3s ease;
+    }
+
+    /* ── Controls ── */
+    .controls-row { display: flex; gap: 8px; }
+
+    .ctrl-btn {
+      flex: 1; padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 11px;
+      background: var(--card); color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.22s ease;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .ctrl-btn:hover:not(:disabled) {
+      border-color: var(--accent); background: var(--accent-dim); color: var(--accent);
+    }
+    .ctrl-btn:active:not(:disabled) { transform: scale(0.96); }
+    .ctrl-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+    .ctrl-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .ctrl-btn.primary {
+      background: var(--accent); color: var(--bg);
+      border-color: var(--accent); font-weight: 700;
+      box-shadow: 0 2px 20px rgba(0,255,213,0.15);
+    }
+    .ctrl-btn.primary:hover:not(:disabled) { background: #33ffe0; color: var(--bg); }
+
+    .reverse-btn {
+      width: 100%; padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 11px;
+      background: var(--card); color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.22s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .reverse-btn:hover:not(:disabled) {
+      border-color: #f59e0b; background: rgba(245,158,11,0.08); color: #f59e0b;
+    }
+    .reverse-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+    .reverse-btn:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
+
+    .speed-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 11px;
+    }
+    .speed-label {
+      font-size: 0.72rem; color: var(--muted); white-space: nowrap;
+      font-family: 'JetBrains Mono', monospace; font-weight: 500;
+    }
+    .speed-slider {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 5px; border-radius: 3px;
+      background: var(--border); outline: none;
+    }
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); cursor: pointer;
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 8px rgba(0,255,213,0.3);
+    }
+    .speed-slider::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); cursor: pointer;
+      border: 2px solid var(--bg);
+    }
+
+    /* ── Encapsulation ── */
+    .encap-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.2rem 1.4rem;
+    }
+    .encap-title {
+      font-size: 0.68rem; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--muted); margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+    .encap-nested { position: relative; }
+    .encap-ring {
+      border: 2px solid; border-radius: 7px;
+      opacity: 0.22; transition: opacity 0.45s ease, background 0.45s ease;
+      position: relative;
+    }
+    .encap-ring.highlighted { opacity: 1; }
+    .encap-ring-label {
+      position: absolute; top: -8px; left: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56rem; padding: 0 5px;
+      background: var(--card); border-radius: 3px;
+      color: rgba(255,255,255,0.5); white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+    .encap-ring.highlighted .encap-ring-label { color: rgba(255,255,255,0.85); }
+    .encap-payload {
+      text-align: center; padding: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; color: var(--muted);
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      background: var(--card-raised); border: 1px solid var(--accent);
+      color: var(--fg); padding: 13px 26px; border-radius: 12px;
+      font-size: 0.88rem; z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+      box-shadow: 0 6px 40px rgba(0,255,213,0.12);
+      opacity: 0; pointer-events: none;
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 500;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast i { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      main { flex-direction: column; align-items: center; }
+      .info-panel { flex: 0 0 auto; width: 100%; max-width: 520px; }
+      .flow-indicator { display: none; }
+      .osi-scene { padding: 16px 10px; }
+    }
+    @media (max-width: 540px) {
+      .l-protos { display: none; }
+      .layer-top { padding: 0 12px; gap: 8px; }
+      .l-name { font-size: 0.88rem; }
+      :root {
+        --layer-h: 56px;
+        --depth-side: 16px;
+        --depth-bottom: 8px;
+      }
+      .info-card { padding: 1.2rem 1.3rem; }
+      .info-panel { gap: 0.9rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+
+  <header>
+    <h1>OSI Model Visualization</h1>
+    <p>Interactive 7-Layer Network Architecture Explorer</p>
+  </header>
+
+  <main>
+    <section class="visualization" aria-label="OSI Model Stack">
+      <div class="osi-scene">
+        <div class="osi-stack-wrapper" id="stackWrapper">
+          <div class="osi-stack" id="osiStack"></div>
+        </div>
+      </div>
+      <div class="flow-indicator">
+        <span class="flow-label">Sender</span>
+        <div class="flow-line" id="flowLine"></div>
+        <span class="flow-label">Receiver</span>
+      </div>
+      <div class="status-label" id="statusLabel">
+        <i class="fa-solid fa-circle-info"></i>&ensp;Click Start to transmit data
+      </div>
+    </section>
+
+    <aside class="info-panel" aria-label="Layer Information">
+      <div class="info-card" id="infoCard">
+        <div class="info-header">
+          <div class="info-badge" id="infoBadge">?</div>
+          <div>
+            <div class="info-title" id="infoTitle">OSI Model</div>
+            <div class="info-subtitle" id="infoSubtitle">Open Systems Interconnection</div>
+          </div>
+        </div>
+        <p class="info-desc" id="infoDesc">
+          The OSI model standardizes network communication into 7 distinct layers. Each layer serves a specific function and encapsulates data as it moves toward transmission.
+        </p>
+        <div class="proto-section">
+          <div class="proto-label">Key Protocols</div>
+          <div class="proto-tags" id="infoProtos">
+            <span class="proto-tag">Click a layer to explore</span>
+          </div>
+        </div>
+        <div class="pdu-row">
+          <span class="pdu-label">Protocol Data Unit</span>
+          <span class="pdu-value" id="infoPDU">&mdash;</span>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="ctrl-btn primary" id="startBtn" aria-label="Start animation">
+          <i class="fa-solid fa-play"></i> Start
+        </button>
+        <button class="ctrl-btn" id="pauseBtn" disabled aria-label="Pause animation">
+          <i class="fa-solid fa-pause"></i> Pause
+        </button>
+        <button class="ctrl-btn" id="resetBtn" disabled aria-label="Reset">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <button class="reverse-btn" id="reverseBtn" disabled aria-label="Reverse animation">
+        <i class="fa-solid fa-arrow-up"></i> Reverse — Receiver Side
+      </button>
+
+      <div class="speed-row">
+        <span class="speed-label">Speed</span>
+        <input type="range" class="speed-slider" id="speedSlider"
+               min="400" max="2200" value="1300" step="100"
+               aria-label="Animation speed">
+        <span class="speed-label" id="speedVal">1.3s</span>
+      </div>
+
+      <div class="encap-card">
+        <div class="encap-title">Data Encapsulation</div>
+        <div class="encap-nested" id="encapNested"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast" role="alert"></div>
+
+  <script>
+    /* ── Layer Data ── */
+    const LAYERS = [
+      {
+        name: "Application", num: 7,
+        color: "#e8443a", mid: "#b5362f", dark: "#7a2520",
+        protocols: ["HTTP", "FTP", "SMTP", "DNS", "SNMP"],
+        desc: "The layer closest to the end user. It provides network services directly to applications — everything from web browsing and email to file transfers and remote login.",
+        pdu: "Data", icon: "fa-window-maximize"
+      },
+      {
+        name: "Presentation", num: 6,
+        color: "#f07c3e", mid: "#c06331", dark: "#804220",
+        protocols: ["SSL/TLS", "JPEG", "ASCII", "MPEG"],
+        desc: "Acts as a translator between application data formats and network formats. Handles encryption, decryption, compression, and character encoding like UTF-8.",
+        pdu: "Data", icon: "fa-lock"
+      },
+      {
+        name: "Session", num: 5,
+        color: "#e8b631", mid: "#b89028", dark: "#7a601a",
+        protocols: ["NetBIOS", "RPC", "PPTP", "SIP"],
+        desc: "Manages dialogue sessions between applications. It establishes, maintains, synchronizes, and terminates connections. Handles checkpointing and recovery.",
+        pdu: "Data", icon: "fa-handshake"
+      },
+      {
+        name: "Transport", num: 4,
+        color: "#27c9a0", mid: "#1fa080", dark: "#156b55",
+        protocols: ["TCP", "UDP", "SCTP", "QUIC"],
+        desc: "Ensures reliable end-to-end data delivery. TCP provides ordered, error-checked delivery with flow control. UDP offers faster, connectionless transmission for real-time apps.",
+        pdu: "Segments", icon: "fa-truck-fast"
+      },
+      {
+        name: "Network", num: 3,
+        color: "#1a9bd7", mid: "#147caa", dark: "#0d5474",
+        protocols: ["IPv4", "IPv6", "ICMP", "ARP", "OSPF"],
+        desc: "Handles logical addressing and routing. Determines the best physical path for data packets to reach their destination across interconnected networks using IP addresses.",
+        pdu: "Packets", icon: "fa-route"
+      },
+      {
+        name: "Data Link", num: 2,
+        color: "#2d6a9f", mid: "#235580", dark: "#173957",
+        protocols: ["Ethernet", "Wi-Fi", "PPP", "MAC", "VLAN"],
+        desc: "Provides node-to-node transfer and error detection. Frames data with MAC addresses for local network delivery. Handles media access control and physical addressing.",
+        pdu: "Frames", icon: "fa-link"
+      },
+      {
+        name: "Physical", num: 1,
+        color: "#1c4d6e", mid: "#163d58", dark: "#0e2838",
+        protocols: ["Fiber", "Copper", "Radio", "Hubs", "Repeaters"],
+        desc: "The lowest layer — transmits raw bit streams over physical media. Defines electrical signals, cable specifications, connectors, and modulation techniques.",
+        pdu: "Bits", icon: "fa-bolt"
+      }
+    ];
+
+    /* ── State ── */
+    let currentLayer = -1;
+    let isPlaying = false;
+    let isPaused = false;
+    let direction = "down";
+    let animTimer = null;
+    let animSpeed = 1300;
+
+    /* ── DOM References ── */
+    const stackWrapper = document.getElementById("stackWrapper");
+    const osiStack     = document.getElementById("osiStack");
+    const statusLabel  = document.getElementById("statusLabel");
+    const infoCard     = document.getElementById("infoCard");
+    const infoBadge    = document.getElementById("infoBadge");
+    const infoTitle    = document.getElementById("infoTitle");
+    const infoSubtitle = document.getElementById("infoSubtitle");
+    const infoDesc     = document.getElementById("infoDesc");
+    const infoProtos   = document.getElementById("infoProtos");
+    const infoPDU      = document.getElementById("infoPDU");
+    const startBtn     = document.getElementById("startBtn");
+    const pauseBtn     = document.getElementById("pauseBtn");
+    const resetBtn     = document.getElementById("resetBtn");
+    const reverseBtn   = document.getElementById("reverseBtn");
+    const speedSlider  = document.getElementById("speedSlider");
+    const speedVal     = document.getElementById("speedVal");
+    const encapNested  = document.getElementById("encapNested");
+    const flowLine     = document.getElementById("flowLine");
+    const toastEl      = document.getElementById("toast");
+
+    /* ── Computed Constants ── */
+    const LAYER_H  = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--layer-h"));
+    const LAYER_GAP = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--layer-gap"));
+    const STEP = LAYER_H + LAYER_GAP;
+
+    /* ── Build Layer Blocks ── */
+    function buildLayers() {
+      LAYERS.forEach((layer, i) => {
+        const block = document.createElement("div");
+        block.className = "layer-block";
+        block.tabIndex = 0;
+        block.setAttribute("role", "button");
+        block.setAttribute("aria-label", `Layer ${layer.num}: ${layer.name}`);
+        block.dataset.index = i;
+        block.style.setProperty("--glow", layer.color + "88");
+        block.style.setProperty("--glow-dim", layer.color + "28");
+
+        block.innerHTML = `
+          <div class="layer-top" style="background:${layer.color};">
+            <span class="l-num">L${layer.num}</span>
+            <i class="fa-solid ${layer.icon} l-icon"></i>
+            <span class="l-name">${layer.name}</span>
+            <span class="l-protos">${layer.protocols.slice(0, 2).join(", ")}</span>
+          </div>
+          <div class="layer-right" style="background:${layer.mid};"></div>
+          <div class="layer-bottom" style="background:${layer.dark};"></div>
+        `;
+
+        block.addEventListener("click", () => showLayerInfo(i, false));
+        block.addEventListener("keydown", e => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showLayerInfo(i, false); }
+        });
+        osiStack.appendChild(block);
+      });
+
+      /* Packet */
+      const packet = document.createElement("div");
+      packet.className = "packet";
+      packet.id = "packet";
+      osiStack.appendChild(packet);
+    }
+
+    /* ── Build Encapsulation Diagram ── */
+    function buildEncapsulation() {
+      encapNested.innerHTML = "";
+      let container = encapNested;
+
+      LAYERS.slice().reverse().forEach((layer, revI) => {
+        const ring = document.createElement("div");
+        ring.className = "encap-ring";
+        ring.dataset.realIndex = 6 - revI;
+        ring.style.borderColor = layer.color;
+        ring.style.background = layer.color + "0a";
+
+        const padTop = [20, 17, 14, 12, 10, 8, 6][revI];
+        const padSide = [12, 11, 10, 9, 8, 7, 6][revI];
+        ring.style.padding = `${padTop}px ${padSide}px`;
+
+        const label = document.createElement("span");
+        label.className = "encap-ring-label";
+        label.textContent = `${layer.name} (${layer.pdu})`;
+        ring.appendChild(label);
+
+        container.appendChild(ring);
+        container = ring;
+      });
+
+      const payload = document.createElement("div");
+      payload.className = "encap-payload";
+      payload.textContent = "User Data";
+      container.appendChild(payload);
+    }
+
+    /* ── Show Layer Info ── */
+    function showLayerInfo(index, isReverse) {
+      const layer = LAYERS[index];
+      infoCard.className = "info-card " + (isReverse ? "reverse-active" : "active");
+      infoBadge.style.background = layer.color;
+      infoBadge.textContent = layer.num;
+      infoTitle.textContent = layer.name;
+      infoTitle.style.color = layer.color;
+      infoSubtitle.textContent = `Layer ${layer.num} of 7`;
+      infoDesc.textContent = layer.desc;
+      infoPDU.textContent = layer.pdu;
+      infoPDU.style.color = isReverse ? "#f59e0b" : "var(--accent)";
+
+      infoProtos.innerHTML = layer.protocols.map(p =>
+        `<span class="proto-tag">${p}</span>`
+      ).join("");
+
+      updateEncapsulation(index);
+    }
+
+    /* ── Update Encapsulation ── */
+    function updateEncapsulation(activeIndex) {
+      const rings = encapNested.querySelectorAll(".encap-ring");
+      rings.forEach(ring => {
+        const ri = parseInt(ring.dataset.realIndex);
+        ring.classList.toggle("highlighted", ri >= activeIndex);
+      });
+    }
+
+    /* ── Highlight Layer Block ── */
+    function highlightLayer(index) {
+      const blocks = osiStack.querySelectorAll(".layer-block");
+      blocks.forEach((b, i) => b.classList.toggle("active", i === index));
+    }
+
+    /* ── Move Packet ── */
+    function movePacket(index) {
+      const packet = document.getElementById("packet");
+      packet.classList.remove("success");
+      packet.classList.add("visible");
+      const topPos = index * STEP + (LAYER_H / 2) - 12;
+      packet.style.top = topPos + "px";
+    }
+
+    /* ── Update Status ── */
+    function updateStatus(text, cls) {
+      const icon = cls === "reverse-active" ? "fa-arrow-up" : "fa-signal";
+      statusLabel.innerHTML = `<i class="fa-solid ${icon}"></i>&ensp;${text}`;
+      statusLabel.className = "status-label" + (cls ? " " + cls : "");
+    }
+
+    /* ── Update Buttons ── */
+    function updateButtons() {
+      const done = currentLayer === 7 && direction === "down";
+      const rDone = currentLayer === -1 && direction === "up";
+
+      startBtn.disabled = isPlaying && !isPaused;
+      pauseBtn.disabled = !isPlaying;
+      resetBtn.disabled = currentLayer === -1 && !isPaused && direction === "down";
+      reverseBtn.disabled = !done;
+
+      if (isPaused) {
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Resume';
+        pauseBtn.disabled = true;
+      } else if (!isPlaying && !done && !rDone) {
+        startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+      } else if (done) {
+        startBtn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+      }
+    }
+
+    /* ── Toast ── */
+    let toastTimeout;
+    function showToast(msg, icon) {
+      toastEl.innerHTML = `<i class="fa-solid ${icon || 'fa-check-circle'}"></i> ${msg}`;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toastEl.classList.remove("show"), 3000);
+    }
+
+    /* ── Animation Step ── */
+    function animStep() {
+      if (!isPlaying || isPaused) return;
+
+      if (direction === "down") {
+        currentLayer++;
+        if (currentLayer >= 7) {
+          isPlaying = false;
+          const pkt = document.getElementById("packet");
+          pkt.classList.add("success");
+          updateStatus("Transmission complete — data sent to receiver.", "");
+          showToast("Data transmitted through all 7 layers", "fa-circle-check");
+          flowLine.classList.remove("reverse");
+          updateButtons();
+          return;
+        }
+        updateStatus(`Now passing: ${LAYERS[currentLayer].name} Layer`, "active");
+      } else {
+        currentLayer--;
+        if (currentLayer < 0) {
+          isPlaying = false;
+          const pkt = document.getElementById("packet");
+          pkt.classList.add("success");
+          updateStatus("Data received and fully decoded!", "");
+          showToast("Data successfully received and decoded", "fa-circle-check");
+          flowLine.classList.remove("reverse");
+          updateButtons();
+          return;
+        }
+        updateStatus(`Now decoding: ${LAYERS[currentLayer].name} Layer`, "reverse-active");
+      }
+
+      highlightLayer(currentLayer);
+      movePacket(currentLayer);
+      showLayerInfo(currentLayer, direction === "up");
+
+      animTimer = setTimeout(animStep, animSpeed);
+    }
+
+    /* ── Button Handlers ── */
+    startBtn.addEventListener("click", () => {
+      if (isPaused) {
+        isPaused = false; isPlaying = true;
+        updateButtons(); animStep(); return;
+      }
+      currentLayer = -1;
+      direction = "down";
+      isPlaying = true; isPaused = false;
+      flowLine.classList.remove("reverse");
+      updateButtons(); animStep();
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      if (!isPlaying) return;
+      isPaused = true; isPlaying = false;
+      clearTimeout(animTimer);
+      updateStatus("Paused", "");
+      updateButtons();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      isPlaying = false; isPaused = false;
+      clearTimeout(animTimer);
+      currentLayer = -1; direction = "down";
+
+      const pkt = document.getElementById("packet");
+      pkt.classList.remove("visible", "success");
+      pkt.style.top = "0px";
+      highlightLayer(-1);
+
+      infoCard.className = "info-card";
+      infoBadge.style.background = "var(--muted)";
+      infoBadge.textContent = "?";
+      infoTitle.textContent = "OSI Model";
+      infoTitle.style.color = "var(--fg)";
+      infoSubtitle.textContent = "Open Systems Interconnection";
+      infoDesc.textContent = "The OSI model standardizes network communication into 7 distinct layers. Each layer serves a specific function and encapsulates data as it moves toward transmission.";
+      infoProtos.innerHTML = '<span class="proto-tag">Click a layer to explore</span>';
+      infoPDU.innerHTML = "&mdash;";
+      infoPDU.style.color = "var(--accent)";
+
+      encapNested.querySelectorAll(".encap-ring").forEach(r => r.classList.remove("highlighted"));
+      flowLine.classList.remove("reverse");
+      updateStatus("Click Start to transmit data", "");
+      updateButtons();
+    });
+
+    reverseBtn.addEventListener("click", () => {
+      currentLayer = 7; direction = "up";
+      isPlaying = true; isPaused = false;
+      flowLine.classList.add("reverse");
+      updateButtons();
+      updateStatus("Receiving data from Physical layer...", "reverse-active");
+      animStep();
+    });
+
+    speedSlider.addEventListener("input", () => {
+      animSpeed = parseInt(speedSlider.value);
+      speedVal.textContent = (animSpeed / 1000).toFixed(1) + "s";
+    });
+
+    /* ── Mouse Parallax ── */
+    document.addEventListener("mousemove", e => {
+      const mx = (e.clientX / window.innerWidth - 0.5);
+      const my = (e.clientY / window.innerHeight - 0.5);
+      stackWrapper.style.transform =
+        `rotateX(${2.5 - my * 5}deg) rotateY(${-2.5 + mx * 5}deg)`;
+    });
+    document.addEventListener("mouseleave", () => {
+      stackWrapper.style.transform = "rotateX(2.5deg) rotateY(-2.5deg)";
+    });
+
+    /* ── Keyboard ── */
+    document.addEventListener("keydown", e => {
+      if (e.target.tagName === "INPUT") return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (isPlaying) pauseBtn.click();
+        else startBtn.click();
+      }
+      if (e.code === "KeyR") resetBtn.click();
+    });
+
+    /* ── Background Particles ── */
+    (function initParticles() {
+      const canvas = document.getElementById("bgCanvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      const COUNT = 55;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function create() {
+        resize();
+        particles = Array.from({ length: COUNT }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.4,
+          dx: (Math.random() - 0.5) * 0.22,
+          dy: (Math.random() - 0.5) * 0.22,
+          a: Math.random() * 0.22 + 0.04
+        }));
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.dx; p.y += p.dy;
+          if (p.x < -10) p.x = canvas.width + 10;
+          if (p.x > canvas.width + 10) p.x = -10;
+          if (p.y < -10) p.y = canvas.height + 10;
+          if (p.y > canvas.height + 10) p.y = -10;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, Math.max(0.1, p.r), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0,255,213,${p.a})`;
+          ctx.fill();
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 130) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(0,255,213,${0.035 * (1 - dist / 130)})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      create();
+      draw();
+      window.addEventListener("resize", resize);
+    })();
+
+    /* ── Init ── */
+    buildLayers();
+    buildEncapsulation();
+    updateButtons();
+  </script>
+</body>
+</html>
