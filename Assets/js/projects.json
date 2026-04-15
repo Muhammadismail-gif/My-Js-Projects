@@ -70,9 +70,9 @@
   "meta": "OSI-Model"
   },
   {
-    "name": "BMI-Calculater",
+    "name": "BMI-Calculator",
     "desc": "A simple BMI Calculator that calculates Body Mass Index based on height and weight inputs.",
-    "meta": "BMI-Calculater"
+    "meta": "BMI-Calculator"
   }
 
 ]
