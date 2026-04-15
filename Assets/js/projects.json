@@ -68,5 +68,11 @@
    "name": "OSI-Model",
   "desc": "Interactive 7-layer OSI Model visualization showing how data packets travel through Application, Presentation, Session, Transport, Network, Data Link, and Physical layers with encapsulation animation, reverse decoding, and dynamic protocol information.",
   "meta": "OSI-Model"
+  },
+  {
+    "name": "BMI-Calculater",
+    "desc": "A simple BMI Calculator that calculates Body Mass Index based on height and weight inputs.",
+    "meta": "BMI-Calculater"
   }
+
 ]
