@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Udhaar Management App for Kiryana Store</title>
+    <meta name="description" content="Simple and modern udhaar (credit) management system for small kiryana stores. Track customers, products, and amounts easily.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Udhaar Management App for Kiryana Store">
+    <meta property="og:description" content="Track daily udhaar customers for your kiryana shop. Free, simple, works offline.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Plus Jakarta Sans (distinctive, not overused) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ECFDF5',
+                            100: '#D1FAE5',
+                            200: '#A7F3D0',
+                            300: '#6EE7B7',
+                            400: '#34D399',
+                            500: '#10B981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065F46',
+                            900: '#064E3B',
+                            950: '#022C22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ====== CSS VARIABLES ====== */
+        :root {
+            --bg: #F7F8F7;
+            --fg: #111827;
+            --muted: #6B7280;
+            --accent: #059669;
+            --card: #FFFFFF;
+            --border: #E5E7EB;
+            --danger: #DC2626;
+            --warning: #D97706;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle ambient background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 600px 400px at 15% 10%, rgba(5,150,105,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 500px at 85% 85%, rgba(217,119,6,0.04) 0%, transparent 70%),
+                radial-gradient(ellipse 400px 300px at 50% 50%, rgba(5,150,105,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Dot pattern overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        /* ====== CARD INTERACTIONS ====== */
+        .creditor-card {
+            transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s cubic-bezier(0.4,0,0.2,1);
+        }
+        .creditor-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px -6px rgba(0,0,0,0.1), 0 4px 10px -4px rgba(0,0,0,0.04);
+        }
+
+        /* ====== MODAL BACKDROP ====== */
+        .modal-backdrop {
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        /* ====== ANIMATIONS ====== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .anim-fade-up {
+            opacity: 0;
+            animation: fadeInUp 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .anim-modal {
+            animation: modalSlideUp 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+
+        @keyframes toastSlide {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .anim-toast-in { animation: toastSlide 0.3s ease forwards; }
+        .anim-toast-out { animation: toastSlide 0.3s ease reverse forwards; }
+
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .pulse-badge { animation: subtlePulse 2.5s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+
+        /* Staggered card delays */
+        .creditor-card:nth-child(1) { animation-delay: 0ms; }
+        .creditor-card:nth-child(2) { animation-delay: 50ms; }
+        .creditor-card:nth-child(3) { animation-delay: 100ms; }
+        .creditor-card:nth-child(4) { animation-delay: 150ms; }
+        .creditor-card:nth-child(5) { animation-delay: 200ms; }
+        .creditor-card:nth-child(6) { animation-delay: 250ms; }
+        .creditor-card:nth-child(7) { animation-delay: 300ms; }
+        .creditor-card:nth-child(8) { animation-delay: 350ms; }
+
+        /* ====== INPUT FOCUS ====== */
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+        }
+
+        /* ====== BUTTON PRESS ====== */
+        .btn-press:active { transform: scale(0.96); }
+
+        /* ====== SCROLLBAR ====== */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+        /* ====== REDUCED MOTION ====== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ====== MOBILE MODAL FIX ====== */
+        @media (max-width: 480px) {
+            .modal-body {
+                margin: 0.25rem;
+                max-height: 96vh;
+                overflow-y: auto;
+                border-radius: 1rem;
+            }
+        }
+
+        /* ====== HIDDEN UTILITY ====== */
+        .sr-only {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0,0,0,0); border: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] pointer-events-none"></div>
+
+    <!-- ==================== STICKY HEADER ==================== -->
+    <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-gray-100/80" style="box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Left: Shop Identity -->
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 flex items-center justify-center flex-shrink-0" style="box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
+                        <i data-lucide="store" class="w-5 h-5 text-white" aria-hidden="true"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="text-sm sm:text-base font-extrabold text-gray-900 leading-tight truncate">Khalid Kiryana Store</h1>
+                        <p class="text-[11px] text-gray-400 font-semibold tracking-wide uppercase">Udhaar Management</p>
+                    </div>
+                </div>
+                <!-- Right: Total Udhaar -->
+                <div class="text-right flex-shrink-0 ml-3">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Total Udhaar</p>
+                    <p id="header-total" class="text-lg sm:text-xl font-black text-brand-700 leading-tight tabular-nums">Rs 0</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-28 pt-4">
+
+        <!-- Stats Cards Row -->
+        <section class="mb-5 grid grid-cols-3 gap-2.5" aria-label="Quick statistics">
+            <div class="bg-white rounded-2xl p-3 border border-gray-100 text-center" style="box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-brand-50 flex items-center justify-center">
+                    <i data-lucide="users" class="w-4 h-4 text-brand-600" aria-hidden="true"></i>
+                </div>
+                <p id="stat-count" class="text-lg font-extrabold text-gray-900 leading-none">0</p>
+                <p class="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase tracking-wider">Customers</p>
+            </div>
+            <div class="bg-white rounded-2xl p-3 border border-gray-100 text-center" style="box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-red-50 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-red-500" aria-hidden="true"></i>
+                </div>
+                <p id="stat-highest" class="text-lg font-extrabold text-red-600 leading-none">Rs 0</p>
+                <p class="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase tracking-wider">Highest</p>
+            </div>
+            <div class="bg-white rounded-2xl p-3 border border-gray-100 text-center" style="box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                <div class="w-8 h-8 mx-auto mb-1.5 rounded-lg bg-amber-50 flex items-center justify-center">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-500" aria-hidden="true"></i>
+                </div>
+                <p id="stat-avg" class="text-lg font-extrabold text-gray-900 leading-none">Rs 0</p>
+                <p class="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase tracking-wider">Average</p>
+            </div>
+        </section>
+
+        <!-- Search + Sort Controls -->
+        <section class="mb-4 flex gap-2" aria-label="Search and sort controls">
+            <div class="flex-1 relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 pointer-events-none" aria-hidden="true"></i>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search name or phone..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all"
+                    aria-label="Search creditors by name or phone number"
+                >
+            </div>
+            <div class="relative">
+                <select
+                    id="sort-select"
+                    class="appearance-none pl-3 pr-9 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 cursor-pointer transition-all"
+                    aria-label="Sort creditors list"
+                >
+                    <option value="oldest">Oldest First</option>
+                    <option value="highest">Highest Amount</option>
+                    <option value="newest">Newest First</option>
+                </select>
+                <i data-lucide="chevrons-up-down" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 pointer-events-none" aria-hidden="true"></i>
+            </div>
+        </section>
+
+        <!-- Creditors List Container -->
+        <section id="creditors-list" aria-label="Creditors list" role="list"></section>
+
+        <!-- Empty State (No Records) -->
+        <section id="empty-state" class="hidden" aria-label="No creditors yet">
+            <div class="text-center py-16 px-4">
+                <div class="float-anim w-24 h-24 mx-auto mb-5 rounded-full bg-gradient-to-br from-brand-50 to-brand-100 flex items-center justify-center border-2 border-brand-100">
+                    <i data-lucide="clipboard-list" class="w-11 h-11 text-brand-300" aria-hidden="true"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-gray-900 mb-2">No Udhaar Records</h2>
+                <p class="text-sm text-gray-400 max-w-[280px] mx-auto leading-relaxed">When a customer takes something on credit, tap the green button below to add their record.</p>
+            </div>
+        </section>
+
+        <!-- No Search Results State -->
+        <section id="no-results" class="hidden" aria-label="No search results found">
+            <div class="text-center py-16 px-4">
+                <div class="w-24 h-24 mx-auto mb-5 rounded-full bg-gray-50 flex items-center justify-center border-2 border-gray-100">
+                    <i data-lucide="search-x" class="w-11 h-11 text-gray-200" aria-hidden="true"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-gray-900 mb-2">No Results Found</h2>
+                <p class="text-sm text-gray-400">Try a different name or phone number.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== FLOATING ADD BUTTON ==================== -->
+    <button
+        id="fab-add"
+        class="btn-press fixed bottom-7 right-5 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 h-14 px-6 bg-gradient-to-r from-brand-600 to-brand-800 text-white rounded-2xl shadow-xl flex items-center gap-2.5 hover:shadow-2xl transition-shadow duration-200"
+        style="box-shadow: 0 8px 24px -4px rgba(5,150,105,0.35);"
+        aria-label="Add new udhaar record"
+    >
+        <i data-lucide="plus" class="w-5 h-5" aria-hidden="true"></i>
+        <span class="text-sm font-bold hidden sm:inline">Add Udhaar</span>
+    </button>
+
+    <!-- ==================== ADD / EDIT MODAL ==================== -->
+    <div id="form-modal" class="hidden fixed inset-0 z-[80] modal-backdrop bg-black/35 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="form-modal-heading">
+        <div class="modal-body bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-md anim-modal">
+            <!-- Modal Header -->
+            <div class="px-6 pt-6 pb-4 flex items-center justify-between">
+                <h2 id="form-modal-heading" class="text-lg font-extrabold text-gray-900">Add New Udhaar</h2>
+                <button id="form-modal-close" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-colors" aria-label="Close form">
+                    <i data-lucide="x" class="w-5 h-5 text-gray-400" aria-hidden="true"></i>
+                </button>
+            </div>
+            <!-- Modal Form -->
+            <form id="creditor-form" class="px-6 pb-6 space-y-4" novalidate>
+                <input type="hidden" id="edit-id" value="">
+
+                <!-- Customer Name -->
+                <div>
+                    <label for="inp-name" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Customer Name <span class="text-red-500">*</span></label>
+                    <input type="text" id="inp-name" placeholder="e.g. Ahmed Khan" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all">
+                    <p id="err-name" class="hidden text-[11px] text-red-500 mt-1 font-semibold">Name is required</p>
+                </div>
+
+                <!-- Phone + Amount Row -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="inp-phone" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Phone</label>
+                        <input type="tel" id="inp-phone" placeholder="03XX-XXXXXXX" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all">
+                    </div>
+                    <div>
+                        <label for="inp-amount" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Amount (Rs) <span class="text-red-500">*</span></label>
+                        <input type="number" id="inp-amount" placeholder="500" required min="1" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all">
+                        <p id="err-amount" class="hidden text-[11px] text-red-500 mt-1 font-semibold">Enter a valid amount</p>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <label for="inp-product" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Product / Item <span class="text-red-500">*</span></label>
+                    <input type="text" id="inp-product" placeholder="e.g. Atta 10kg, Sugar 2kg" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all">
+                    <p id="err-product" class="hidden text-[11px] text-red-500 mt-1 font-semibold">Product is required</p>
+                </div>
+
+                <!-- Address -->
+                <div>
+                    <label for="inp-address" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Address</label>
+                    <input type="text" id="inp-address" placeholder="e.g. Street 5, Mohalla XYZ" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 placeholder-gray-400 transition-all">
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="form-submit-btn" class="btn-press w-full py-3 bg-gradient-to-r from-brand-600 to-brand-700 text-white font-extrabold text-sm rounded-xl transition-all duration-200 mt-2" style="box-shadow: 0 4px 14px -3px rgba(5,150,105,0.3);">
+                    Add Udhaar Record
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== DELETE CONFIRMATION MODAL ==================== -->
+    <div id="delete-modal" class="hidden fixed inset-0 z-[90] modal-backdrop bg-black/35 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="del-modal-heading">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs anim-modal overflow-hidden">
+            <div class="px-6 pt-7 pb-3 text-center">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center border-2 border-red-100">
+                    <i data-lucide="check-check" class="w-7 h-7 text-red-500" aria-hidden="true"></i>
+                </div>
+                <h2 id="del-modal-heading" class="text-lg font-extrabold text-gray-900 mb-1">Mark as Paid?</h2>
+                <p id="del-modal-desc" class="text-sm text-gray-400 leading-relaxed">This record will be permanently removed.</p>
+            </div>
+            <div class="px-6 pb-6 pt-3 flex gap-3">
+                <button id="del-cancel" class="btn-press flex-1 py-2.5 bg-gray-100 text-gray-700 font-bold text-sm rounded-xl hover:bg-gray-200 transition-colors">Cancel</button>
+                <button id="del-confirm" class="btn-press flex-1 py-2.5 bg-red-600 text-white font-bold text-sm rounded-xl hover:bg-red-700 transition-colors" style="box-shadow: 0 4px 12px -3px rgba(220,38,38,0.3);">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+    // ================================================================
+    // LOCALSTORAGE — EXPLAINED SIMPLY
+    // ================================================================
+    //
+    // Think of LocalStorage like a small notebook inside the browser.
+    // You write something in it → it stays there forever
+    // (until the user clears browser data).
+    //
+    // HOW IT WORKS IN THIS APP:
+    //
+    //   1. Every creditor record is a JavaScript "object" (like a row):
+    //      {
+    //        id: "abc123",            ← unique ID (never duplicates)
+    //        name: "Ahmed Khan",      ← customer name
+    //        phone: "0312-1234567",   ← phone number
+    //        address: "Street 5",     ← optional address
+    //        product: "Atta 10kg",    ← what they took
+    //        amount: 1500,            ← how much in rupees
+    //        createdAt: 1700000000000 ← timestamp (when added)
+    //      }
+    //
+    //   2. All records live in one array: [record1, record2, ...]
+    //
+    //   3. LocalStorage only stores TEXT strings, so we:
+    //      → SAVE: convert array to text with JSON.stringify()
+    //      → READ: convert text back to array with JSON.parse()
+    //
+    //   4. Key name: "khalid_kiryana_creditors"
+    //      (just a label to find our data in the notebook)
+    //
+    // ================================================================
+
+    const STORAGE_KEY = 'khalid_kiryana_creditors';
+
+    // ---------- READ data from LocalStorage ----------
+    function getCreditors() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return [];          // Nothing saved yet → empty list
+            return JSON.parse(raw);       // Text → JavaScript array
+        } catch (e) {
+            console.error('Failed to read data:', e);
+            return [];                     // If corrupted → start fresh
+        }
+    }
+
+    // ---------- WRITE data to LocalStorage ----------
+    function saveCreditors(list) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        } catch (e) {
+            console.error('Failed to save data:', e);
+            showToast('Storage full! Delete some records.', 'error');
+        }
+    }
+
+    // ---------- Generate unique ID ----------
+    // Combines current time + random letters so it never repeats
+    function makeId() {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+    }
+
+    // ---------- Format as Rupees ----------
+    function fmtRs(n) {
+        return 'Rs ' + Number(n).toLocaleString('en-PK');
+    }
+
+    // ---------- Format date nicely ----------
+    function fmtDate(ts) {
+        return new Date(ts).toLocaleDateString('en-PK', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+    }
+
+    // ---------- "X days ago" helper ----------
+    function daysAgo(ts) {
+        const d = Math.floor((Date.now() - ts) / 86400000);
+        if (d === 0) return 'Today';
+        if (d === 1) return 'Yesterday';
+        if (d < 30) return d + ' days ago';
+        if (d < 365) return Math.floor(d / 30) + ' months ago';
+        return Math.floor(d / 365) + ' years ago';
+    }
+
+    // ---------- Escape HTML (security) ----------
+    // Prevents someone from typing <script> in a name field
+    function esc(str) {
+        if (!str) return '';
+        const el = document.createElement('span');
+        el.textContent = str;
+        return el.innerHTML;
+    }
+
+
+    // ================================================================
+    // DOM REFERENCES
+    // ================================================================
+    // These are just shortcuts so we don't have to write
+    // document.getElementById('...') every time.
+
+    const $headerTotal  = document.getElementById('header-total');
+    const $statCount    = document.getElementById('stat-count');
+    const $statHighest  = document.getElementById('stat-highest');
+    const $statAvg      = document.getElementById('stat-avg');
+    const $list         = document.getElementById('creditors-list');
+    const $empty        = document.getElementById('empty-state');
+    const $noResults    = document.getElementById('no-results');
+    const $search       = document.getElementById('search-input');
+    const $sort         = document.getElementById('sort-select');
+    const $fab          = document.getElementById('fab-add');
+
+    // Form modal elements
+    const $fModal       = document.getElementById('form-modal');
+    const $fClose       = document.getElementById('form-modal-close');
+    const $fHeading     = document.getElementById('form-modal-heading');
+    const $fForm        = document.getElementById('creditor-form');
+    const $fEditId      = document.getElementById('edit-id');
+    const $fSubmit      = document.getElementById('form-submit-btn');
+    const $fName        = document.getElementById('inp-name');
+    const $fPhone       = document.getElementById('inp-phone');
+    const $fAmount      = document.getElementById('inp-amount');
+    const $fProduct     = document.getElementById('inp-product');
+    const $fAddress     = document.getElementById('inp-address');
+    const $eName        = document.getElementById('err-name');
+    const $eAmount      = document.getElementById('err-amount');
+    const $eProduct     = document.getElementById('err-product');
+
+    // Delete modal elements
+    const $dModal       = document.getElementById('delete-modal');
+    const $dDesc        = document.getElementById('del-modal-desc');
+    const $dCancel      = document.getElementById('del-cancel');
+    const $dConfirm     = document.getElementById('del-confirm');
+
+    let pendingDeleteId = null; // Stores which record to delete
+
+
+    // ================================================================
+    // TOAST NOTIFICATIONS
+    // ================================================================
+    // Instead of ugly browser alert() boxes, we show a small
+    // colored bar at the top that auto-disappears.
+
+    function showToast(msg, type) {
+        const c = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        const bg = type === 'error' ? 'bg-red-600' : 'bg-brand-800';
+        const icon = type === 'error' ? 'alert-circle' : 'check-circle-2';
+        t.className = `anim-toast-in pointer-events-auto ${bg} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-bold whitespace-nowrap`;
+        t.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i><span>${msg}</span>`;
+        c.appendChild(t);
+        lucide.createIcons({ nodes: [t] });
+
+        setTimeout(() => {
+            t.classList.replace('anim-toast-in', 'anim-toast-out');
+            setTimeout(() => t.remove(), 300);
+        }, 2800);
+    }
+
+
+    // ================================================================
+    // THE MAIN RENDER FUNCTION
+    // ================================================================
+    // This is the heart of the app. Every time something changes
+    // (add, edit, delete, search, sort), we call render() and it
+    // rebuilds the entire list from LocalStorage data.
+
+    function render() {
+        // 1. Read all data
+        let data = getCreditors();
+
+        // 2. Calculate totals
+        const total = data.reduce((s, c) => s + Number(c.amount), 0);
+        const highest = data.length ? Math.max(...data.map(c => Number(c.amount))) : 0;
+        const avg = data.length ? Math.round(total / data.length) : 0;
+
+        // 3. Update header total (color changes based on amount)
+        $headerTotal.textContent = fmtRs(total);
+        if (total >= 50000) {
+            $headerTotal.className = 'text-lg sm:text-xl font-black text-red-600 leading-tight tabular-nums';
+        } else if (total >= 20000) {
+            $headerTotal.className = 'text-lg sm:text-xl font-black text-amber-600 leading-tight tabular-nums';
+        } else {
+            $headerTotal.className = 'text-lg sm:text-xl font-black text-brand-700 leading-tight tabular-nums';
+        }
+
+        // 4. Update stats cards
+        $statCount.textContent = data.length;
+        $statHighest.textContent = fmtRs(highest);
+        $statAvg.textContent = fmtRs(avg);
+
+        // 5. Apply search filter
+        const q = $search.value.trim().toLowerCase();
+        let filtered = data;
+        if (q) {
+            filtered = data.filter(c =>
+                c.name.toLowerCase().includes(q) ||
+                (c.phone && c.phone.toLowerCase().includes(q))
+            );
+        }
+
+        // 6. Apply sorting
+        const sortBy = $sort.value;
+        if (sortBy === 'oldest') {
+            filtered.sort((a, b) => a.createdAt - b.createdAt);
+        } else if (sortBy === 'highest') {
+            filtered.sort((a, b) => Number(b.amount) - Number(a.amount));
+        } else if (sortBy === 'newest') {
+            filtered.sort((a, b) => b.createdAt - a.createdAt);
+        }
+
+        // 7. Handle empty states
+        $list.innerHTML = '';
+        if (data.length === 0) {
+            $empty.classList.remove('hidden');
+            $noResults.classList.add('hidden');
+            return;
+        }
+        $empty.classList.add('hidden');
+
+        if (filtered.length === 0 && q) {
+            $noResults.classList.remove('hidden');
+            return;
+        }
+        $noResults.classList.add('hidden');
+
+        // 8. Build cards
+        filtered.forEach((c) => {
+            const amt = Number(c.amount);
+            const isMax = amt === highest && data.length > 1;
+
+            // Color logic based on amount
+            let amtColor, amtBg, borderColor;
+            if (amt >= 5000) {
+                amtColor = 'text-red-700'; amtBg = 'bg-red-50'; borderColor = 'border-l-red-400';
+            } else if (amt >= 2000) {
+                amtColor = 'text-amber-700'; amtBg = 'bg-amber-50'; borderColor = 'border-l-amber-400';
+            } else {
+                amtColor = 'text-brand-700'; amtBg = 'bg-brand-50'; borderColor = 'border-l-brand-400';
+            }
+
+            const card = document.createElement('article');
+            card.className = `creditor-card anim-fade-up bg-white rounded-2xl border border-gray-100 border-l-4 ${borderColor} p-4 mb-3`;
+            card.setAttribute('role', 'listitem');
+            card.style.boxShadow = '0 1px 4px rgba(0,0,0,0.03)';
+
+            card.innerHTML = `
+                <!-- Top Row: Name + Amount -->
+                <div class="flex items-start justify-between gap-3 mb-2.5">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-[15px] font-extrabold text-gray-900 truncate">${esc(c.name)}</h3>
+                            ${isMax ? `<span class="pulse-badge inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-extrabold rounded-full border border-red-100 uppercase tracking-wide"><i data-lucide="trending-up" class="w-3 h-3"></i>Highest</span>` : ''}
+                        </div>
+                        ${c.phone ? `<p class="text-xs text-gray-400 font-medium mt-0.5 flex items-center gap-1"><i data-lucide="phone" class="w-3 h-3" aria-hidden="true"></i>${esc(c.phone)}</p>` : ''}
+                    </div>
+                    <p class="text-xl font-black ${amtColor} tabular-nums flex-shrink-0 leading-none">${fmtRs(amt)}</p>
+                </div>
+
+                <!-- Product Badge + Date -->
+                <div class="flex items-center gap-2 mb-2.5 flex-wrap">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 ${amtBg} ${amtColor} text-xs font-bold rounded-lg">
+                        <i data-lucide="package" class="w-3 h-3" aria-hidden="true"></i>${esc(c.product)}
+                    </span>
+                    <span class="text-gray-200 text-xs">|</span>
+                    <span class="text-xs text-gray-400 font-medium flex items-center gap-1">
+                        <i data-lucide="calendar" class="w-3 h-3" aria-hidden="true"></i>${fmtDate(c.createdAt)}
+                    </span>
+                </div>
+
+                ${c.address ? `<p class="text-xs text-gray-400 mb-2.5 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 flex-shrink-0" aria-hidden="true"></i><span class="truncate">${esc(c.address)}</span></p>` : ''}
+
+                <!-- Bottom: Days ago + Action buttons -->
+                <div class="flex items-center justify-between pt-2.5 border-t border-gray-50">
+                    <span class="text-[11px] text-gray-300 font-semibold">${daysAgo(c.createdAt)}</span>
+                    <div class="flex items-center gap-1.5">
+                        <button data-edit="${c.id}" class="btn-press inline-flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-700 text-xs font-bold rounded-lg transition-colors" aria-label="Edit ${esc(c.name)}">
+                            <i data-lucide="pencil" class="w-3 h-3" aria-hidden="true"></i>Edit
+                        </button>
+                        <button data-delete="${c.id}" data-delname="${esc(c.name)}" class="btn-press inline-flex items-center gap-1 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold rounded-lg transition-colors" aria-label="Mark ${esc(c.name)} as paid">
+                            <i data-lucide="check-circle-2" class="w-3 h-3" aria-hidden="true"></i>Paid
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            $list.appendChild(card);
+        });
+
+        // Re-render Lucide icons for newly added card elements
+        lucide.createIcons();
+
+        // Attach event listeners to edit/delete buttons (event delegation alternative)
+        $list.querySelectorAll('[data-edit]').forEach(btn => {
+            btn.addEventListener('click', () => editCreditor(btn.dataset.edit));
+        });
+        $list.querySelectorAll('[data-delete]').forEach(btn => {
+            btn.addEventListener('click', () => openDeleteModal(btn.dataset.delete, btn.dataset.delname));
+        });
+    }
+
+
+    // ================================================================
+    // FORM MODAL — OPEN / CLOSE
+    // ================================================================
+
+    function openFormModal(mode) {
+        // Reset error states
+        [$eName, $eAmount, $eProduct].forEach(e => e.classList.add('hidden'));
+        [$fName, $fAmount, $fProduct].forEach(e => e.classList.remove('border-red-400'));
+
+        if (mode === 'add') {
+            $fHeading.textContent = 'Add New Udhaar';
+            $fSubmit.textContent = 'Add Udhaar Record';
+            $fSubmit.className = 'btn-press w-full py-3 bg-gradient-to-r from-brand-600 to-brand-700 text-white font-extrabold text-sm rounded-xl transition-all duration-200 mt-2';
+            $fSubmit.style.boxShadow = '0 4px 14px -3px rgba(5,150,105,0.3)';
+            $fForm.reset();
+            $fEditId.value = '';
+        } else {
+            $fHeading.textContent = 'Edit Udhaar Record';
+            $fSubmit.textContent = 'Save Changes';
+            $fSubmit.className = 'btn-press w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-extrabold text-sm rounded-xl transition-all duration-200 mt-2';
+            $fSubmit.style.boxShadow = '0 4px 14px -3px rgba(217,119,6,0.3)';
+        }
+
+        $fModal.classList.remove('hidden');
+        setTimeout(() => $fName.focus(), 150);
+    }
+
+    function closeFormModal() {
+        $fModal.classList.add('hidden');
+        $fForm.reset();
+        $fEditId.value = '';
+    }
+
+
+    // ================================================================
+    // DELETE MODAL — OPEN / CLOSE
+    // ================================================================
+
+    function openDeleteModal(id, name) {
+        pendingDeleteId = id;
+        $dDesc.textContent = `"${name}" will be permanently removed from your udhaar list.`;
+        $dModal.classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        $dModal.classList.add('hidden');
+        pendingDeleteId = null;
+    }
+
+
+    // ================================================================
+    // EDIT FUNCTION
+    // ================================================================
+
+    function editCreditor(id) {
+        const list = getCreditors();
+        const record = list.find(c => c.id === id);
+        if (!record) return;
+
+        // Fill form with existing data
+        $fEditId.value = record.id;
+        $fName.value = record.name;
+        $fPhone.value = record.phone || '';
+        $fAmount.value = record.amount;
+        $fProduct.value = record.product;
+        $fAddress.value = record.address || '';
+
+        openFormModal('edit');
+    }
+
+
+    // ================================================================
+    // FORM SUBMISSION — ADD OR UPDATE
+    // ================================================================
+
+    $fForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Stop page from refreshing
+
+        const name    = $fName.value.trim();
+        const phone   = $fPhone.value.trim();
+        const amount  = $fAmount.value.trim();
+        const product = $fProduct.value.trim();
+        const address = $fAddress.value.trim();
+        const editId  = $fEditId.value;
+
+        // ---- Validation ----
+        let valid = true;
+
+        if (!name) {
+            $eName.classList.remove('hidden'); $fName.classList.add('border-red-400'); valid = false;
+        } else {
+            $eName.classList.add('hidden'); $fName.classList.remove('border-red-400');
+        }
+
+        if (!amount || Number(amount) <= 0) {
+            $eAmount.classList.remove('hidden'); $fAmount.classList.add('border-red-400'); valid = false;
+        } else {
+            $eAmount.classList.add('hidden'); $fAmount.classList.remove('border-red-400');
+        }
+
+        if (!product) {
+            $eProduct.classList.remove('hidden'); $fProduct.classList.add('border-red-400'); valid = false;
+        } else {
+            $eProduct.classList.add('hidden'); $fProduct.classList.remove('border-red-400');
+        }
+
+        if (!valid) return; // Stop here if errors
+
+        let list = getCreditors();
+
+        if (editId) {
+            // ---- EDIT: find and update existing record ----
+            const idx = list.findIndex(c => c.id === editId);
+            if (idx !== -1) {
+                list[idx].name    = name;
+                list[idx].phone   = phone;
+                list[idx].amount  = Number(amount);
+                list[idx].product = product;
+                list[idx].address = address;
+                // NOTE: We keep the ORIGINAL createdAt — don't change it!
+            }
+            saveCreditors(list);
+            closeFormModal();
+            showToast('Record updated successfully', 'success');
+        } else {
+            // ---- ADD: create brand new record ----
+            list.unshift({
+                id: makeId(),
+                name: name,
+                phone: phone,
+                address: address,
+                product: product,
+                amount: Number(amount),
+                createdAt: Date.now() // Right now, in milliseconds
+            });
+            saveCreditors(list);
+            closeFormModal();
+            showToast('Udhaar record added', 'success');
+        }
+
+        render(); // Rebuild the list
+    });
+
+    // Clear error styles as user types
+    $fName.addEventListener('input',    () => { $eName.classList.add('hidden');    $fName.classList.remove('border-red-400'); });
+    $fAmount.addEventListener('input',  () => { $eAmount.classList.add('hidden');  $fAmount.classList.remove('border-red-400'); });
+    $fProduct.addEventListener('input', () => { $eProduct.classList.add('hidden'); $fProduct.classList.remove('border-red-400'); });
+
+
+    // ================================================================
+    // DELETE CONFIRMATION
+    // ================================================================
+
+    $dConfirm.addEventListener('click', function() {
+        if (!pendingDeleteId) return;
+
+        let list = getCreditors();
+        list = list.filter(c => c.id !== pendingDeleteId);
+        saveCreditors(list);
+
+        closeDeleteModal();
+        render();
+        showToast('Marked as paid and removed', 'success');
+    });
+
+    $dCancel.addEventListener('click', closeDeleteModal);
+
+
+    // ================================================================
+    // EVENT LISTENERS
+    // ================================================================
+
+    // Open add modal
+    $fab.addEventListener('click', () => openFormModal('add'));
+
+    // Close form modal
+    $fClose.addEventListener('click', closeFormModal);
+
+    // Close modals on backdrop click
+    $fModal.addEventListener('click', (e) => { if (e.target === $fModal) closeFormModal(); });
+    $dModal.addEventListener('click', (e) => { if (e.target === $dModal) closeDeleteModal(); });
+
+    // Close modals with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (!$dModal.classList.contains('hidden')) closeDeleteModal();
+            else if (!$fModal.classList.contains('hidden')) closeFormModal();
+        }
+    });
+
+    // Search and sort trigger re-render
+    $search.addEventListener('input', render);
+    $sort.addEventListener('change', render);
+
+
+    // ================================================================
+    // INITIALIZATION — What runs when page first loads
+    // ================================================================
+
+    lucide.createIcons(); // Draw all icons
+    render();             // Build the list from saved data
+
+    </script>
+</body>
+</html>
