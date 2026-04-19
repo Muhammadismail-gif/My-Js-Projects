@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaveClip — Real Video Downloader</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root{--bg:#0a0f0d;--bg2:#111a16;--bg3:#162019;--fg:#e8f0ec;--mt:#7a9488;--ac:#00e676;--ac2:#00c864;--glow:rgba(0,230,118,.15);--bd:#1e3029;--dng:#ff5252;--wrn:#ffab40;--inf:#40c4ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.22;animation:oF 20s ease-in-out infinite}
+.orb:nth-child(1){width:500px;height:500px;background:radial-gradient(circle,#00e676,transparent 70%);top:-10%;left:-10%}
+.orb:nth-child(2){width:400px;height:400px;background:radial-gradient(circle,#00bfa5,transparent 70%);bottom:-15%;right:-5%;animation-delay:-7s;animation-duration:25s}
+.orb:nth-child(3){width:300px;height:300px;background:radial-gradient(circle,#76ff03,transparent 70%);top:40%;left:50%;animation-delay:-14s;animation-duration:30s;opacity:.1}
+@keyframes oF{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(50px,-30px) scale(1.1)}50%{transform:translate(-30px,50px) scale(.95)}75%{transform:translate(40px,20px) scale(1.05)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px}
+.wrap{position:relative;z-index:2}
+
+.iw{position:relative;border:2px solid var(--bd);border-radius:16px;background:var(--bg2);transition:all .3s}
+.iw:focus-within{border-color:var(--ac);box-shadow:0 0 30px var(--glow),0 0 60px rgba(0,230,118,.05)}
+.ui{width:100%;background:0 0;border:none;outline:none;color:var(--fg);font-size:1.05rem;padding:20px 140px 20px 56px;font-family:'DM Sans',sans-serif}
+.ui::placeholder{color:var(--mt)}
+.db{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--ac);color:var(--bg);border:none;padding:12px 28px;border-radius:12px;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .25s;font-family:'Space Grotesk',sans-serif}
+.db:hover{background:var(--ac2);box-shadow:0 4px 20px rgba(0,230,118,.3);transform:translateY(-50%) scale(1.02)}
+.db:active{transform:translateY(-50%) scale(.98)}
+.db:disabled{opacity:.5;cursor:not-allowed;transform:translateY(-50%)!important}
+.sp{display:inline-block;width:16px;height:16px;border:2px solid var(--bg);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.pb{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:10px;background:var(--bg3);border:1px solid var(--bd);font-size:.85rem;color:var(--mt);transition:all .25s;cursor:default}
+.pb:hover{border-color:var(--ac);color:var(--fg);transform:translateY(-2px)}
+.pb i{font-size:1.1rem}
+
+.rc{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;overflow:hidden;animation:sU .5s cubic-bezier(.16,1,.3,1)}
+@keyframes sU{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.fr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd);transition:background .2s;gap:12px;flex-wrap:wrap}
+.fr:last-child{border-bottom:none}.fr:hover{background:rgba(0,230,118,.03)}
+.ft{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.ft.mp4{background:rgba(0,230,118,.15);color:var(--ac)}.ft.webm{background:rgba(64,196,255,.15);color:var(--inf)}.ft.mp3{background:rgba(255,171,64,.15);color:var(--wrn)}
+.qb{font-size:.8rem;padding:3px 8px;border-radius:4px;background:var(--bg3);color:var(--mt);font-weight:500}
+.qb.hd{background:rgba(0,230,118,.1);color:var(--ac)}
+.ab{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;border:1px solid var(--ac);background:0 0;color:var(--ac);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.ab:hover{background:var(--ac);color:var(--bg);box-shadow:0 2px 12px rgba(0,230,118,.25)}
+.ab:active{transform:scale(.96)}
+.ab.au{border-color:var(--wrn);color:var(--wrn)}.ab.au:hover{background:var(--wrn);color:var(--bg);box-shadow:0 2px 12px rgba(255,171,64,.25)}
+.ab.fb{border-color:var(--inf);color:var(--inf)}.ab.fb:hover{background:var(--inf);color:var(--bg)}
+.ab:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+
+/* Primary one-click button */
+.oneclick{display:flex;align-items:center;gap:14px;padding:20px 24px;border-radius:14px;background:linear-gradient(135deg,rgba(0,230,118,.08),rgba(118,255,3,.04));border:2px solid var(--ac);cursor:pointer;transition:all .3s;text-decoration:none;color:var(--fg);width:100%}
+.oneclick:hover{background:linear-gradient(135deg,rgba(0,230,118,.15),rgba(118,255,3,.08));transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,230,118,.15)}
+.oneclick .oc-icon{width:52px;height:52px;border-radius:14px;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--bg);flex-shrink:0}
+.oneclick .oc-arrow{margin-left:auto;font-size:1.2rem;color:var(--ac);flex-shrink:0}
+
+.svc{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;background:var(--bg3);border:1px solid var(--bd);transition:all .2s;cursor:pointer;text-decoration:none;color:var(--fg)}
+.svc:hover{border-color:var(--inf);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.svc .si{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(64,196,255,.1);color:var(--inf);font-size:1rem;flex-shrink:0}
+
+.tb{padding:10px 20px;border-radius:10px;background:0 0;border:1px solid transparent;color:var(--mt);font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.tb:hover{color:var(--fg);background:var(--bg3)}.tb.on{background:var(--bg3);border-color:var(--ac);color:var(--ac)}
+
+.fc{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:28px;transition:all .3s}
+.fc:hover{border-color:rgba(0,230,118,.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.fi{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:16px}
+
+.fqi{border:1px solid var(--bd);border-radius:12px;overflow:hidden;transition:all .2s;background:var(--bg2)}
+.fqi:hover{border-color:rgba(0,230,118,.2)}
+.fqq{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;font-weight:600;font-size:.95rem;user-select:none;transition:color .2s}
+.fqq:hover{color:var(--ac)}.fqq i{transition:transform .3s;font-size:.8rem;color:var(--mt)}
+.fqi.open .fqq i{transform:rotate(180deg);color:var(--ac)}
+.fqa{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1)}
+.fqi.open .fqa{max-height:300px}
+.fqai{padding:0 22px 18px;color:var(--mt);font-size:.9rem;line-height:1.7}
+
+.hi{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:10px;background:var(--bg3);border:1px solid var(--bd);transition:all .2s}
+.hi:hover{border-color:rgba(0,230,118,.2);background:var(--bg2)}
+.ht{width:80px;height:50px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bd)}
+
+.pt{position:fixed;bottom:30px;right:30px;z-index:1000;padding:16px 24px;border-radius:12px;font-size:.9rem;font-weight:500;display:flex;align-items:center;gap:10px;animation:tIn .4s cubic-bezier(.16,1,.3,1);box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:420px}
+.pt.ok{background:var(--bg3);border:1px solid var(--ac);color:var(--ac)}
+.pt.er{background:var(--bg3);border:1px solid var(--dng);color:var(--dng)}
+.pt.in{background:var(--bg3);border:1px solid var(--inf);color:var(--inf)}
+@keyframes tIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes tOut{to{opacity:0;transform:translateY(20px) scale(.95)}}
+
+.sd{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;animation:pls 2s ease-in-out infinite}
+.sd.g{background:var(--ac)}.sd.y{background:var(--wrn)}.sd.r{background:var(--dng)}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* CORS explanation box */
+.cors-box{background:linear-gradient(135deg,rgba(255,171,64,.06),rgba(255,82,82,.04));border:1px solid rgba(255,171,64,.2);border-radius:14px;padding:20px 24px}
+.cors-box code{background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--wrn)}
+
+.particle{position:fixed;width:3px;height:3px;background:var(--ac);border-radius:50%;pointer-events:none;z-index:1;opacity:0;animation:pd 15s linear infinite}
+@keyframes pd{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.4}90%{opacity:.4}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
+
+@media(max-width:768px){
+.ui{padding:16px 16px 16px 48px;font-size:.95rem}
+.db{padding:10px 16px;font-size:.85rem;right:4px}
+.fr{gap:8px}.ab{width:100%;justify-content:center}
+.pt{bottom:16px;right:16px;left:16px;max-width:none}
+.oneclick{flex-direction:column;text-align:center}.oneclick .oc-arrow{margin-left:0;margin-top:8px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="bg-mesh" aria-hidden="true"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+<div class="noise" aria-hidden="true"></div>
+<div id="particles" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<header class="py-5 px-6">
+<div class="max-w-6xl mx-auto flex items-center justify-between">
+  <a href="#" class="flex items-center gap-3" style="text-decoration:none"><div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--ac)"><i class="fas fa-download text-sm" style="color:var(--bg)"></i></div><span class="text-xl font-bold" style="font-family:'Space Grotesk',sans-serif">SaveClip</span></a>
+  <nav class="hidden md:flex items-center gap-2">
+    <a href="#features" class="tb">Features</a>
+    <a href="#howto" class="tb">How to Use</a>
+    <a href="#faq" class="tb">FAQ</a>
+    <button onclick="toggleHist()" class="tb"><i class="fas fa-clock-rotate-left mr-1"></i>History<span id="hc" class="ml-1 text-xs px-1.5 py-0.5 rounded-full" style="background:var(--ac);color:var(--bg);display:none">0</span></button>
+  </nav>
+  <button class="md:hidden text-lg" style="color:var(--mt)" onclick="document.getElementById('mm').classList.toggle('hidden')" aria-label="Menu"><i class="fas fa-bars"></i></button>
+</div>
+<div id="mm" class="hidden md:hidden mt-4 p-4 rounded-xl" style="background:var(--bg2);border:1px solid var(--bd)"><div class="flex flex-col gap-2"><a href="#features" class="tb block text-left">Features</a><a href="#howto" class="tb block text-left">How to Use</a><a href="#faq" class="tb block text-left">FAQ</a><button onclick="toggleHist()" class="tb text-left"><i class="fas fa-clock-rotate-left mr-1"></i>History</button></div></div>
+</header>
+
+<section class="px-6 pt-10 pb-16">
+<div class="max-w-3xl mx-auto text-center">
+  <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-5">Download Any Video<br><span style="background:linear-gradient(135deg,var(--ac),#76ff03);-webkit-background-clip:text;-webkit-text-fill-color:transparent">For Real</span></h1>
+  <p class="text-lg mb-8" style="color:var(--mt);max-width:540px;margin:0 auto;line-height:1.7">Paste a link. Get a real file. Multiple strategies ensure your download always goes through.</p>
+
+  <div id="apiSt" class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm" style="background:var(--bg3);border:1px solid var(--bd);color:var(--mt)"><span class="sd g"></span>Checking download paths...</div>
+
+  <div class="iw" id="urlW">
+    <i class="fas fa-link absolute left-5 top-1/2 -translate-y-1/2" style="color:var(--mt);font-size:1.1rem"></i>
+    <input type="url" class="ui" id="urlIn" placeholder="Paste video link — e.g. https://youtube.com/watch?v=..." autocomplete="off" aria-label="Video URL">
+    <button class="db" id="fb" onclick="doFetch()"><i class="fas fa-arrow-down mr-1"></i>Download</button>
+  </div>
+  <p class="mt-4 text-sm" style="color:var(--mt)"><kbd class="px-2 py-1 rounded text-xs" style="background:var(--bg3);border:1px solid var(--bd)">Ctrl+V</kbd> paste &middot; <kbd class="px-2 py-1 rounded text-xs" style="background:var(--bg3);border:1px solid var(--bd)">Enter</kbd> download</p>
+
+  <div class="flex flex-wrap items-center justify-center gap-3 mt-8">
+    <span class="pb"><i class="fab fa-youtube" style="color:#ff4444"></i>YouTube</span>
+    <span class="pb"><i class="fab fa-instagram" style="color:#e4405f"></i>Instagram</span>
+    <span class="pb"><i class="fab fa-tiktok"></i>TikTok</span>
+    <span class="pb"><i class="fab fa-twitter" style="color:#1da1f2"></i>Twitter/X</span>
+    <span class="pb"><i class="fab fa-facebook" style="color:#1877f2"></i>Facebook</span>
+    <span class="pb"><i class="fab fa-vimeo-v" style="color:#1ab7ea"></i>Vimeo</span>
+    <span class="pb"><i class="fab fa-twitch" style="color:#9146ff"></i>Twitch</span>
+    <span class="pb"><i class="fab fa-reddit" style="color:#ff4500"></i>Reddit</span>
+    <span class="pb"><i class="fas fa-ellipsis" style="color:var(--mt)"></i>50+ more</span>
+  </div>
+</div>
+</section>
+
+<section id="resSec" class="px-6 pb-12 hidden"><div class="max-w-4xl mx-auto" id="resC"></div></section>
+
+<section id="hp" class="px-6 pb-12 hidden">
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center justify-between mb-6"><h2 class="text-2xl font-bold">Download History</h2><button onclick="clrH()" class="text-sm px-4 py-2 rounded-lg" style="color:var(--dng);border:1px solid var(--dng);background:0 0;cursor:pointer" onmouseover="this.style.background='rgba(255,82,82,.1)'" onmouseout="this.style.background='transparent'"><i class="fas fa-trash-alt mr-1"></i>Clear</button></div>
+  <div id="hl" class="flex flex-col gap-3"></div>
+  <div id="he" class="text-center py-16 hidden"><i class="fas fa-inbox text-4xl mb-4" style="color:var(--bd)"></i><p style="color:var(--mt)">No downloads yet.</p></div>
+</div>
+</section>
+
+<section id="features" class="px-6 py-20">
+<div class="max-w-6xl mx-auto">
+  <div class="text-center mb-14"><h2 class="text-3xl md:text-4xl font-bold mb-4">How CORS Is Solved</h2><p style="color:var(--mt);max-width:560px;margin:0 auto">Three real strategies, tried in order, until one works.</p></div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="fc"><div class="fi" style="background:rgba(0,230,118,.1);color:var(--ac)"><i class="fas fa-bolt"></i></div><h3 class="text-lg font-bold mb-2">Strategy 1: Direct API</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">Call <code style="background:var(--bg);padding:1px 5px;border-radius:4px;font-size:.8rem;color:var(--ac)">api.cobalt.tools</code> directly. Works if Cobalt adds CORS headers (they sometimes do for their web app).</p></div>
+    <div class="fc"><div class="fi" style="background:rgba(64,196,255,.1);color:var(--inf)"><i class="fas fa-shuffle"></i></div><h3 class="text-lg font-bold mb-2">Strategy 2: CORS Proxies</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">Route through 5 different proxy servers. Each proxy adds <code style="background:var(--bg);padding:1px 5px;border-radius:4px;font-size:.8rem;color:var(--inf)">Access-Control-Allow-Origin: *</code> so your browser accepts the response.</p></div>
+    <div class="fc"><div class="fi" style="background:rgba(255,171,64,.1);color:var(--wrn)"><i class="fas fa-external-link-alt"></i></div><h3 class="text-lg font-bold mb-2">Strategy 3: One-Click Open</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">Open <code style="background:var(--bg);padding:1px 5px;border-radius:4px;font-size:.8rem;color:var(--wrn)">cobalt.tools/#url=YOUR_LINK</code> in a new tab. Cobalt's own website calls their API from their server — no CORS issue. One click, paste, done.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="howto" class="px-6 py-20">
+<div class="max-w-4xl mx-auto">
+  <div class="text-center mb-14"><h2 class="text-3xl md:text-4xl font-bold mb-4">What Happens When You Click Download</h2></div>
+  <div class="flex flex-col gap-4">
+    <div class="flex items-start gap-4 p-5 rounded-xl" style="background:var(--bg2);border:1px solid var(--bd)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background:var(--ac);color:var(--bg)">1</div>
+      <div><h3 class="font-bold mb-1">Fetch Video Info via OEmbed</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">YouTube, TikTok, Twitter, Vimeo etc. all have OEmbed endpoints with proper CORS headers. We get your video's title, thumbnail, and channel name — this always works.</p></div>
+    </div>
+    <div class="flex items-start gap-4 p-5 rounded-xl" style="background:var(--bg2);border:1px solid var(--bd)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background:var(--ac);color:var(--bg)">2</div>
+      <div><h3 class="font-bold mb-1">Try Cobalt API Directly</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">POST your URL to api.cobalt.tools. If they've enabled CORS (varies by deployment), we get a real download link immediately.</p></div>
+    </div>
+    <div class="flex items-start gap-4 p-5 rounded-xl" style="background:var(--bg2);border:1px solid var(--bd)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background:var(--inf);color:var(--bg)">3</div>
+      <div><h3 class="font-bold mb-1">Try 5 CORS Proxies in Parallel</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">If direct fails, we send the same request through corsproxy.io, cors.sh, thingproxy, and others simultaneously. First one to respond wins. These proxies add the missing CORS header.</p></div>
+    </div>
+    <div class="flex items-start gap-4 p-5 rounded-xl" style="background:var(--bg2);border:1px solid var(--bd)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-sm font-bold" style="background:var(--wrn);color:var(--bg)">4</div>
+      <div><h3 class="font-bold mb-1">One-Click Fallback (Always Works)</h3><p class="text-sm" style="color:var(--mt);line-height:1.7">If all proxies fail, we show a big button that opens cobalt.tools with your URL pre-filled in the address bar. Their website calls the API from their own server — zero CORS issues. Just click Download on their page.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="faq" class="px-6 py-20">
+<div class="max-w-3xl mx-auto">
+  <div class="text-center mb-14"><h2 class="text-3xl md:text-4xl font-bold mb-4">FAQ</h2></div>
+  <div class="flex flex-col gap-3" id="fqC"></div>
+</div>
+</section>
+
+<footer class="px-6 py-10" style="border-top:1px solid var(--bd)">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+  <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--ac)"><i class="fas fa-download text-xs" style="color:var(--bg)"></i></div><span class="text-sm font-semibold" style="font-family:'Space Grotesk',sans-serif">SaveClip</span></div>
+  <p class="text-sm text-center" style="color:var(--mt)">Powered by Cobalt API + CORS proxies. For personal use only.</p>
+  <a href="https://github.com/imputnet/cobalt" target="_blank" rel="noopener" class="text-sm" style="color:var(--mt);text-decoration:none" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--mt)'">Cobalt on GitHub <i class="fas fa-arrow-up-right-from-square ml-1 text-xs"></i></a>
+</div>
+</footer>
+
+</div>
+<div id="tc"></div>
+
+<script>
+// ==================== CONFIG ====================
+const COBALT = 'https://api.cobalt.tools/';
+const COBALT_WEB = 'https://cobalt.tools/';
+
+// 5 CORS proxies — tried in parallel, first win
+const PROXIES = [
+  { name:'corsproxy.io', fn: u => `https://corsproxy.io/?${encodeURIComponent(u)}` },
+  { name:'thingproxy', fn: u => `https://thingproxy.freeboard.io/fetch/${u}` },
+  { name:'cors.sh', fn: u => `https://proxy.cors.sh/${u}`, headers: { 'x-cors-api-key': 'temp_*' } },
+  { name:'cors-anywhere', fn: u => `https://cors-anywhere.herokuapp.com/${u}` },
+  { name:'codetabs', fn: u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}` },
+];
+
+const PLATS = [
+  {name:'YouTube',icon:'fab fa-youtube',color:'#ff4444',p:['youtube.com','youtu.be']},
+  {name:'Instagram',icon:'fab fa-instagram',color:'#e4405f',p:['instagram.com']},
+  {name:'TikTok',icon:'fab fa-tiktok',color:'#fff',p:['tiktok.com']},
+  {name:'Twitter/X',icon:'fab fa-twitter',color:'#1da1f2',p:['twitter.com','x.com']},
+  {name:'Facebook',icon:'fab fa-facebook',color:'#1877f2',p:['facebook.com','fb.watch']},
+  {name:'Vimeo',icon:'fab fa-vimeo-v',color:'#1ab7ea',p:['vimeo.com']},
+  {name:'Twitch',icon:'fab fa-twitch',color:'#9146ff',p:['twitch.tv']},
+  {name:'Reddit',icon:'fab fa-reddit',color:'#ff4500',p:['reddit.com','redd.it']},
+  {name:'Dailymotion',icon:'fas fa-play-circle',color:'#0066dc',p:['dailymotion.com']},
+  {name:'Pinterest',icon:'fab fa-pinterest',color:'#e60023',p:['pinterest.com']},
+  {name:'SoundCloud',icon:'fab fa-soundcloud',color:'#ff5500',p:['soundcloud.com']},
+];
+
+const OEMBED = {
+  'YouTube': u => `https://www.youtube.com/oembed?url=${encodeURIComponent(u)}&format=json`,
+  'TikTok': u => `https://www.tiktok.com/oembed?url=${encodeURIComponent(u)}&format=json`,
+  'Twitter/X': u => `https://publish.twitter.com/oembed?url=${encodeURIComponent(u)}&format=json`,
+  'Vimeo': u => `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(u)}`,
+  'Reddit': u => `https://www.reddit.com/oembed?url=${encodeURIComponent(u)}&format=json`,
+};
+
+const VQ = [
+  {v:'4320',l:'8K',hd:true},{v:'2160',l:'4K',hd:true},{v:'1440',l:'2K',hd:true},
+  {v:'1080',l:'1080p',hd:true},{v:'720',l:'720p',hd:false},{v:'480',l:'480p',hd:false},{v:'360',l:'360p',hd:false},
+];
+const AQ = [{v:'320',l:'320kbps',s:'High'},{v:'192',l:'192kbps',s:'Standard'},{v:'128',l:'128kbps',s:'Compact'}];
+
+const FALLBACKS = [
+  {name:'Cobalt.tools (Recommended)',url:COBALT_WEB,icon:'fas fa-bolt',desc:'Open-source, no ads, pre-filled URL',primary:true},
+  {name:'SaveFrom.net',url:'https://en.savefrom.net/',icon:'fas fa-download',desc:'Popular multi-platform downloader'},
+  {name:'SnapSave.app',url:'https://snapsave.app/',icon:'fas fa-camera',desc:'Fast for Instagram & TikTok'},
+  {name:'Y2Mate.com',url:'https://www.y2mate.com/',icon:'fas fa-music',desc:'YouTube specialist'},
+  {name:'9xBuddy.com',url:'https://9xbuddy.com/',icon:'fas fa-globe',desc:'Supports 1000+ sites'},
+];
+
+const FAQ_D = [
+  {q:'Why does it say "CORS restrictions"?',a:'CORS (Cross-Origin Resource Sharing) is a browser security feature. When this page tries to call the Cobalt API, the API doesn\'t respond with the header "Access-Control-Allow-Origin", so the browser blocks the response. This ONLY happens in browsers — their own website works because it calls the API from their own server (same origin).'},
+  {q:'Does the download actually work then?',a:'Yes, through Strategy 3. We open cobalt.tools with your URL pre-filled (cobalt.tools/#url=YOUR_LINK). Their website processes it server-side and gives you the download. It\'s the same API, just called from their server instead of your browser. One extra click, real file.'},
+  {q:'Can I skip the fallback and download directly?',a:'Sometimes! If the Cobalt API happens to allow CORS (they toggle this), or if one of our 5 CORS proxies is working, you\'ll get a direct download with no extra steps. We try all options automatically.'},
+  {q:'What are CORS proxies?',a:'Servers that sit between your browser and the target API. They forward your request, get the response, add "Access-Control-Allow-Origin: *" to it, and send it back. Your browser sees the header and accepts the data. We try 5 different proxies simultaneously — if any works, you get a direct download.'},
+  {q:'Which platforms are supported?',a:'YouTube, Instagram, TikTok, Twitter/X, Facebook, Vimeo, Twitch, Reddit, Dailymotion, Pinterest, SoundCloud, Tumblr, and dozens more via Cobalt\'s continuously updated list.'},
+  {q:'Is this free?',a:'Completely free, no registration. Cobalt\'s public API has rate limits (~10 requests/min without a key), which is enough for personal use.'},
+  {q:'Is it legal?',a:'Downloading for personal offline viewing is generally fair use. Redistributing or commercially using downloaded content without permission may violate copyright. Respect creators\' rights.'},
+  {q:'Can I self-host to avoid CORS entirely?',a:'Yes! If you run this HTML on your own server with a backend proxy (Node.js, Python, etc.) that forwards requests to Cobalt, CORS is completely bypassed. The Cobalt GitHub repo has deployment guides.'},
+];
+
+// ==================== STATE ====================
+let hist = JSON.parse(localStorage.getItem('sc_h') || '[]');
+let apiOk = null; // null=unknown, true=direct works, false=need proxy/fallback
+
+// ==================== UTILS ====================
+function detPlat(u) {
+  const l = u.toLowerCase();
+  for (const p of PLATS) for (const x of p.p) if (l.includes(x)) return p;
+  return null;
+}
+function validUrl(s) { try { const u = new URL(s); return u.protocol==='http:'||u.protocol==='https:'; } catch { return false; } }
+function isDirectVid(u) { return /\.(mp4|webm|mkv|avi|mov|flv|wmv|m4v)(\?.*)?$/i.test(u.split('?')[0]); }
+
+function toast(m, t='ok', d=3500) {
+  const c = document.getElementById('tc'), el = document.createElement('div');
+  el.className = `pt ${t}`;
+  const ic = {ok:'fa-check-circle',er:'fa-exclamation-circle',in:'fa-info-circle'};
+  el.innerHTML = `<i class="fas ${ic[t]}"></i><span>${m}</span>`;
+  c.appendChild(el);
+  setTimeout(() => { el.style.animation='tOut .3s ease forwards'; setTimeout(()=>el.remove(),300); }, d);
+}
+
+function tAgo(ts) {
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return 'just now'; const m=Math.floor(s/60); if(m<60)return m+'m ago';
+  const h=Math.floor(m/60); if(h<24)return h+'h ago'; return Math.floor(h/24)+'d ago';
+}
+
+function setSt(s, msg) {
+  const el = document.getElementById('apiSt');
+  apiOk = s;
+  if (s===true) { el.innerHTML=`<span class="sd g"></span>${msg||'Direct API available — instant downloads'}`; el.style.borderColor='rgba(0,230,118,.3)'; }
+  else if (s==='proxy') { el.innerHTML=`<span class="sd y"></span>${msg||'Direct blocked — using CORS proxy'}`; el.style.borderColor='rgba(255,171,64,.3)'; }
+  else { el.innerHTML=`<span class="sd y"></span>${msg||'Use one-click fallback (always works)'}`; el.style.borderColor='rgba(255,171,64,.3)'; }
+}
+
+// ==================== OEMBED ====================
+async function getMeta(url, plat) {
+  const fn = OEMBED[plat.name]; if (!fn) return null;
+  try { const r = await fetch(fn(url)); if (!r.ok) return null; return await r.json(); }
+  catch { return null; }
+}
+
+// ==================== COBALT API ====================
+function buildBody(url, mode, quality) {
+  const b = { url, filenameStyle:'basic' };
+  if (mode === 'audio') { b.downloadMode='audio'; b.audioFormat='mp3'; b.audioBitrate=quality||'320'; }
+  else { b.downloadMode='auto'; b.videoQuality=quality||'1080'; }
+  return b;
+}
+
+async function postJson(url, body, extraHeaders={}) {
+  const r = await fetch(url, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Accept':'application/json', ...extraHeaders },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  if (d.status==='error') throw new Error(d.error?.code||'api_error');
+  return d;
+}
+
+// Try all strategies and return first success
+async function cobaltFetch(url, mode='auto', quality='1080') {
+  const body = buildBody(url, mode, quality);
+
+  // Strategy 1: Direct
+  try {
+    const d = await postJson(COBALT, body);
+    if (apiOk !== true) setSt(true);
+    return { data:d, method:'direct' };
+  } catch(e) { console.log('Direct failed:', e.message); }
+
+  // Strategy 2: All proxies in parallel — first success wins
+  setSt('proxy', 'Trying CORS proxies...');
+
+  const results = await Promise.allSettled(
+    PROXIES.map(async (px) => {
+      const proxyUrl = px.fn(COBALT);
+      const d = await postJson(proxyUrl, body, px.headers||{});
+      return { data:d, method:`proxy:${px.name}` };
+    })
+  );
+
+  for (const r of results) {
+    if (r.status === 'fulfilled') {
+      setSt('proxy', `Download via ${r.value.method} — working!`);
+      return r.value;
+    }
+  }
+
+  // All failed
+  setSt(false, 'All proxies failed — use one-click fallback below');
+  return null;
+}
+
+// ==================== DOWNLOAD ====================
+function triggerDl(url, fname) {
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  if (fname) a.download = fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+async function blobDl(url, fname) {
+  try {
+    toast('Downloading file...', 'in', 2500);
+    const r = await fetch(url);
+    const b = await r.blob();
+    const bu = URL.createObjectURL(b);
+    const a = document.createElement('a'); a.href=bu; a.download=fname||'video.mp4';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(bu);
+    return true;
+  } catch(e) {
+    console.log('Blob failed, opening directly:', e);
+    triggerDl(url, fname);
+    return true;
+  }
+}
+
+// ==================== MAIN FETCH ====================
+async function doFetch() {
+  const inp = document.getElementById('urlIn');
+  const btn = document.getElementById('fb');
+  const url = inp.value.trim();
+
+  if (!url) { toast('Paste a video URL first.','er'); inp.focus(); return; }
+  if (!validUrl(url)) { toast('Enter a valid URL (https://...)','er'); inp.focus(); return; }
+
+  // Direct video file URL
+  if (isDirectVid(url)) {
+    btn.disabled=true; btn.innerHTML='<span class="sp"></span>Downloading...';
+    const fn = url.split('/').pop().split('?')[0]||'video.mp4';
+    await blobDl(url, fn);
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-arrow-down mr-1"></i>Download';
+    addH({title:fn,ch:'Direct',pl:'Direct',pi:'fas fa-file-video',pc:'var(--ac)',fmt:'MP4',q:'Original',sz:'—',th:'',ts:Date.now()});
+    toast('Download started!','ok'); return;
+  }
+
+  const plat = detPlat(url);
+  if (!plat) { toast('Platform not recognized. Try YouTube, Instagram, TikTok, etc.','er'); return; }
+
+  btn.disabled=true; btn.innerHTML='<span class="sp"></span>Analyzing...';
+  document.getElementById('resSec').classList.add('hidden');
+
+  // Phase 1: OEmbed metadata (always works — has CORS headers)
+  let meta = null;
+  try { meta = await getMeta(url, plat); } catch {}
+  const info = {
+    title: meta?.title || `Video from ${plat.name}`,
+    author: meta?.author_name || plat.name,
+    thumb: meta?.thumbnail_url || meta?.thumbnail || '',
+  };
+
+  // Phase 2: Cobalt API (direct + all proxies)
+  let result = null;
+  let apiErr = null;
+  try { result = await cobaltFetch(url, 'auto', '1080'); }
+  catch(e) { apiErr = e.message; }
+
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-arrow-down mr-1"></i>Download';
+
+  if (result) {
+    renderSuccess(url, plat, info, result.data, result.method);
+    toast(`Ready to download from ${plat.name}!`,'ok');
+  } else {
+    renderFallback(url, plat, info, apiErr);
+    toast('Use the one-click button below to download.','in',5000);
+  }
+}
+
+// ==================== RENDER: SUCCESS ====================
+function renderSuccess(url, plat, info, data, method) {
+  const sec = document.getElementById('resSec');
+  const con = document.getElementById('resC');
+  const eu = encodeURIComponent(url);
+  const mLabel = method.startsWith('proxy') ? `via ${method.replace('proxy:','')}` : 'direct';
+
+  // Picker (carousel/slideshow with multiple items)
+  let pickerHtml = '';
+  if (data.status === 'picker' && data.picker) {
+    pickerHtml = `<div class="p-5" style="border-bottom:1px solid var(--bd)">
+      <p class="text-sm font-semibold mb-3"><i class="fas fa-images mr-2" style="color:var(--inf)"></i>${data.picker.length} items found</p>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">${data.picker.map((it,i) => `
+        <div class="rounded-xl overflow-hidden" style="background:var(--bg3);border:1px solid var(--bd)">
+          <div class="relative"><img src="${it.url}" alt="Item ${i+1}" class="w-full aspect-video object-cover" loading="lazy" onerror="this.style.background='var(--bd)'">
+          <div class="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold" style="background:rgba(0,0,0,.7);color:${it.type==='video'?'var(--ac)':'var(--inf)'}"><i class="fas fa-${it.type==='video'?'play':'image'} mr-1"></i>${it.type}</div></div>
+          <div class="p-2"><button class="ab w-full justify-center text-xs" onclick="dlFile('${it.url}','${plat.name}_${i+1}')"><i class="fas fa-download"></i>Download</button></div>
+        </div>`).join('')}</div>
+      ${data.audio?`<div class="mt-3"><button class="ab au" onclick="dlFile('${data.audio}','${plat.name}_audio')"><i class="fas fa-music"></i>Download Audio</button></div>`:''}
+    </div>`;
+  }
+
+  const dlUrl = data.url || '';
+
+  con.innerHTML = `<div class="rcard">
+    <div class="flex flex-col md:flex-row gap-5 p-6" style="border-bottom:1px solid var(--bd)">
+      ${info.thumb?`<div class="relative flex-shrink-0"><img src="${info.thumb}" alt="Thumbnail" class="w-full md:w-72 h-44 object-cover rounded-xl" loading="lazy" onerror="this.style.display='none'"><div class="absolute top-2 left-2 px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5" style="background:rgba(0,0,0,.7);color:${plat.color}"><i class="${plat.icon}"></i>${plat.name}</div></div>`:''}
+      <div class="flex flex-col justify-between min-w-0">
+        <div>
+          <h3 class="text-lg font-bold mb-2 leading-snug">${info.title}</h3>
+          <p class="text-sm mb-1" style="color:var(--mt)">${info.author}</p>
+          <p class="text-xs mt-2 px-2 py-1 rounded inline-block" style="background:rgba(0,230,118,.08);color:var(--ac)"><i class="fas fa-check-circle mr-1"></i>Download link obtained ${mLabel}</p>
+        </div>
+        <div class="mt-3 flex items-center gap-2 text-xs" style="color:var(--mt)">
+          <i class="fas fa-link"></i><span class="truncate max-w-xs">${url}</span>
+          <button onclick="navigator.clipboard.writeText(decodeURIComponent('${eu}'));toast('Copied!','in')" class="px-2 py-1 rounded" style="background:var(--bg3);border:1px solid var(--bd);color:var(--mt);cursor:pointer" aria-label="Copy"><i class="fas fa-copy"></i></button>
+        </div>
+      </div>
+    </div>
+    ${pickerHtml}
+    ${!pickerHtml && dlUrl ? `
+    <div class="flex gap-2 p-4 pb-0">
+      <button class="tb on" onclick="swTab(this,'vT')">Video</button>
+      <button class="tb" onclick="swTab(this,'aT')">Audio Only</button>
+    </div>
+    <div id="vT" class="py-3">
+      <div class="px-5 pb-2 text-xs" style="color:var(--mt)">Click a quality to request that specific version from the API.</div>
+      ${VQ.map(q=>`<div class="fr">
+        <div class="flex items-center gap-3"><span class="ft mp4"><i class="fas fa-video"></i>MP4</span><span class="qb ${q.hd?'hd':''}">${q.l}</span></div>
+        <button class="ab" onclick="reqDl('${eu}','video','${q.v}','${plat.name}')"><i class="fas fa-download"></i>Download</button>
+      </div>`).join('')}
+    </div>
+    <div id="aT" class="py-3 hidden">
+      <div class="px-5 pb-2 text-xs" style="color:var(--mt)">Extract audio as MP3.</div>
+      ${AQ.map(q=>`<div class="fr">
+        <div class="flex items-center gap-3"><span class="ft mp3"><i class="fas fa-music"></i>MP3</span><span class="qb">${q.l}</span><span class="text-sm" style="color:var(--mt)">${q.s}</span></div>
+        <button class="ab au" onclick="reqDl('${eu}','audio','${q.v}','${plat.name}')"><i class="fas fa-download"></i>Download</button>
+      </div>`).join('')}
+    </div>` : ''}
+  </div>`;
+  sec.classList.remove('hidden');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function reqDl(eu, mode, quality, platName) {
+  const url = decodeURIComponent(eu);
+  toast(`Requesting ${mode==='audio'?'MP3 '+quality+'kbps':'MP4 '+quality}...`,'in',2500);
+  try {
+    const r = await cobaltFetch(url, mode, quality);
+    if (r && r.data && r.data.url) {
+      const ext = mode==='audio'?'mp3':'mp4';
+      const fn = `${platName}_${quality}p.${ext}`;
+      dlFile(r.data.url, fn);
+    } else {
+      toast('Could not get this quality. Try another or use one-click fallback.','er',5000);
+      // Re-render fallback
+      const plat = detPlat(url);
+      if (plat) renderFallback(url, plat, {title:`${platName} video`,author:plat.name,thumb:''},'quality_unavailable');
+    }
+  } catch(e) {
+    toast(`Error: ${e.message}. Use one-click fallback.`,'er',5000);
+    const plat = detPlat(url);
+    if (plat) renderFallback(url, plat, {title:`${platName} video`,author:plat.name,thumb:''}, e.message);
+  }
+}
+
+function dlFile(dlUrl, fname) {
+  triggerDl(dlUrl, fname);
+  addH({title:fname,ch:'—',pl:'Downloaded',pi:'fas fa-check-circle',pc:'var(--ac)',fmt:fname.split('.').pop().toUpperCase(),q:'—',sz:'—',th:'',ts:Date.now()});
+  toast(`Downloading: ${fname}`,'ok');
+}
+
+// ==================== RENDER: FALLBACK ====================
+function renderFallback(url, plat, info, errMsg) {
+  const sec = document.getElementById('resSec');
+  const con = document.getElementById('resC');
+  const eu = encodeURIComponent(url);
+
+  // Build cobalt.tools deep link with URL pre-filled
+  const cobaltDeepLink = `${COBALT_WEB}#url=${eu}`;
+
+  con.innerHTML = `<div class="rcard">
+    <!-- Video info -->
+    <div class="flex flex-col md:flex-row gap-5 p-6" style="border-bottom:1px solid var(--bd)">
+      ${info.thumb?`<div class="relative flex-shrink-0"><img src="${info.thumb}" alt="" class="w-full md:w-72 h-44 object-cover rounded-xl" loading="lazy" onerror="this.style.display='none'"><div class="absolute top-2 left-2 px-2 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5" style="background:rgba(0,0,0,.7);color:${plat.color}"><i class="${plat.icon}"></i>${plat.name}</div></div>`:''}
+      <div class="flex flex-col justify-between min-w-0">
+        <div>
+          <h3 class="text-lg font-bold mb-2 leading-snug">${info.title}</h3>
+          <p class="text-sm mb-3" style="color:var(--mt)">${info.author}</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs" style="color:var(--mt)">
+          <i class="fas fa-link"></i><span class="truncate max-w-xs">${url}</span>
+          <button onclick="navigator.clipboard.writeText(decodeURIComponent('${eu}'));toast('Copied!','in')" class="px-2 py-1 rounded" style="background:var(--bg3);border:1px solid var(--bd);color:var(--mt);cursor:pointer" aria-label="Copy"><i class="fas fa-copy"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONE-CLICK primary button -->
+    <div class="p-5" style="border-bottom:1px solid var(--bd)">
+      <p class="text-sm font-semibold mb-4"><i class="fas fa-magic mr-2" style="color:var(--ac)"></i>One-Click Download (Recommended)</p>
+      <a href="${cobaltDeepLink}" target="_blank" rel="noopener noreferrer" class="oneclick" onclick="navigator.clipboard.writeText(decodeURIComponent('${eu}'))">
+        <div class="oc-icon"><i class="fas fa-bolt"></i></div>
+        <div class="flex-1 text-left">
+          <p class="font-bold text-base">Open in Cobalt.tools</p>
+          <p class="text-sm" style="color:var(--mt)">Your URL is auto-copied. Just paste (Ctrl+V) on the opened page and click Download. No CORS issues — their server handles it.</p>
+        </div>
+        <div class="oc-arrow"><i class="fas fa-arrow-right"></i></div>
+      </a>
+    </div>
+
+    <!-- CORS explanation -->
+    <div class="p-5" style="border-bottom:1px solid var(--bd)">
+      <div class="cors-box">
+        <p class="text-sm font-semibold mb-2" style="color:var(--wrn)"><i class="fas fa-lock mr-1"></i>Why can't this page download directly?</p>
+        <p class="text-sm mb-2" style="color:var(--mt);line-height:1.7">
+          Your browser blocks this page from reading responses from <code>api.cobalt.tools</code> because Cobalt's API doesn't include the <code>Access-Control-Allow-Origin</code> header. This is a <strong style="color:var(--fg)">browser security feature</strong> called CORS — it protects you from malicious websites reading data from other sites.
+        </p>
+        <p class="text-sm" style="color:var(--mt);line-height:1.7">
+          Cobalt's own website works because it calls the API from <strong style="color:var(--fg)">their own server</strong> (same origin = no CORS). The one-click button above does the same thing — opens their website where CORS doesn't apply.
+        </p>
+        ${errMsg ? `<p class="text-xs mt-2" style="color:var(--dng)">Last error: ${errMsg}</p>` : ''}
+      </div>
+    </div>
+
+    <!-- Other fallback services -->
+    <div class="p-5" style="border-bottom:1px solid var(--bd)">
+      <p class="text-sm font-semibold mb-4"><i class="fas fa-external-link-alt mr-2" style="color:var(--inf)"></i>Alternative Services</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        ${FALLBACKS.filter(f=>!f.primary).map(s=>`
+          <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="svc" onclick="navigator.clipboard.writeText(decodeURIComponent('${eu}'))">
+            <div class="si"><i class="${s.icon}"></i></div>
+            <div class="flex-1 min-w-0"><p class="text-sm font-semibold">${s.name}</p><p class="text-xs" style="color:var(--mt)">${s.desc}</p></div>
+            <i class="fas fa-arrow-up-right-from-square text-xs" style="color:var(--mt)"></i>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Retry -->
+    <div class="p-5">
+      <p class="text-sm font-semibold mb-3"><i class="fas fa-rotate mr-2" style="color:var(--ac)"></i>Try Again</p>
+      <div class="flex flex-wrap gap-3">
+        <button class="ab" onclick="retryProxies('${eu}')"><i class="fas fa-shuffle"></i>Retry All CORS Proxies</button>
+        <button class="ab fb" onclick="doFetch()"><i class="fas fa-redo"></i>Full Retry</button>
+      </div>
+    </div>
+  </div>`;
+
+  // Auto-copy URL
+  navigator.clipboard.writeText(url).catch(()=>{});
+  sec.classList.remove('hidden');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function retryProxies(eu) {
+  const url = decodeURIComponent(eu);
+  toast('Retrying all 5 CORS proxies...','in',2500);
+  const body = buildBody(url, 'auto', '1080');
+  const results = await Promise.allSettled(
+    PROXIES.map(async px => {
+      const d = await postJson(px.fn(COBALT), body, px.headers||{});
+      return { data:d, method:`proxy:${px.name}` };
+    })
+  );
+  for (const r of results) {
+    if (r.status === 'fulfilled') {
+      const plat = detPlat(url);
+      let info = {title:`Video from ${plat?.name||'unknown'}`,author:plat?.name||'—',thumb:''};
+      try { const m = await getMeta(url, plat); if(m) info={title:m.title||info.title,author:m.author_name||info.author,thumb:m.thumbnail_url||''}; } catch{}
+      renderSuccess(url, plat||{name:'Unknown',icon:'fas fa-video',color:'var(--mt)'}, info, r.value.data, r.value.method);
+      toast(`Success via ${r.value.method}!`,'ok');
+      return;
+    }
+  }
+  toast('All proxies still failing. Use the one-click button.','er',5000);
+}
+
+// ==================== TABS ====================
+function swTab(btn, id) {
+  btn.parentElement.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  btn.closest('.rcard').querySelectorAll('[id$="T"]').forEach(t=>t.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ==================== HISTORY ====================
+function addH(item) {
+  hist.unshift(item);
+  if(hist.length>30)hist.pop();
+  localStorage.setItem('sc_h',JSON.stringify(hist));
+  updHc();
+}
+function updHc() {
+  const el=document.getElementById('hc');
+  if(hist.length>0){el.style.display='inline';el.textContent=hist.length;}else{el.style.display='none';}
+}
+function toggleHist() {
+  const p=document.getElementById('hp'),h=p.classList.contains('hidden');
+  p.classList.toggle('hidden');
+  if(h){renH();p.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+function renH() {
+  const l=document.getElementById('hl'),e=document.getElementById('he');
+  if(!hist.length){l.innerHTML='';e.classList.remove('hidden');return;}
+  e.classList.add('hidden');
+  l.innerHTML=hist.map((h,i)=>`
+    <div class="hi" style="animation:sU .3s ease ${i*.04}s both">
+      ${h.th?`<img src="${h.th}" alt="" class="ht" loading="lazy" onerror="this.style.display='none'">`:`<div class="ht flex items-center justify-center" style="background:var(--bg)"><i class="${h.pi}" style="color:${h.pc};font-size:.8rem"></i></div>`}
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold truncate">${h.title}</p>
+        <div class="flex items-center gap-2 mt-1 text-xs flex-wrap" style="color:var(--mt)"><span>${h.pl}</span><span>&middot;</span><span>${h.fmt} ${h.q}</span><span>&middot;</span><span>${tAgo(h.ts)}</span></div>
+      </div>
+      <button onclick="hist.splice(${i},1);localStorage.setItem('sc_h',JSON.stringify(hist));updHc();renH()" class="p-2 rounded-lg" style="color:var(--mt);cursor:pointer;background:none;border:none" onmouseover="this.style.color='var(--dng)'" onmouseout="this.style.color='var(--mt)'" aria-label="Remove"><i class="fas fa-xmark"></i></button>
+    </div>`).join('');
+}
+function clrH() { hist=[]; localStorage.setItem('sc_h','[]'); updHc(); renH(); toast('Cleared.','in'); }
+
+// ==================== FAQ ====================
+function renFAQ() {
+  document.getElementById('fqC').innerHTML = FAQ_D.map(f=>`
+    <div class="fqi">
+      <div class="fqq" onclick="this.parentElement.classList.toggle('open')" role="button" tabindex="0" aria-expanded="false"><span>${f.q}</span><i class="fas fa-chevron-down"></i></div>
+      <div class="fqa"><div class="fqai">${f.a}</div></div>
+    </div>`).join('');
+}
+
+// ==================== PARTICLES ====================
+function mkP() {
+  const c=document.getElementById('particles'), n=innerWidth<768?5:10;
+  for(let i=0;i<n;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDelay=Math.random()*15+'s';p.style.animationDuration=(12+Math.random()*10)+'s';const s=2+Math.random()*2;p.style.width=s+'px';p.style.height=s+'px';c.appendChild(p);}
+}
+
+// ==================== API HEALTH CHECK ====================
+async function chkApi() {
+  try {
+    const ac = new AbortController();
+    const t = setTimeout(()=>ac.abort(), 4000);
+    await fetch(COBALT, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({url:'https://example.com/test',filenameStyle:'basic'}),
+      signal:ac.signal,
+    });
+    clearTimeout(t);
+    setSt(true);
+  } catch(e) {
+    if(e.name==='AbortError'){ setSt(false,'API timeout — will try CORS proxies on download'); return; }
+    setSt(false,'API blocked by CORS — will try proxies, then one-click fallback');
+  }
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', () => {
+  mkP(); renFAQ(); updHc(); chkApi();
+  const inp = document.getElementById('urlIn');
+  inp.addEventListener('focus', async () => {
+    if(inp.value)return;
+    try{const t=await navigator.clipboard.readText();if(t&&validUrl(t)&&detPlat(t)){inp.value=t;toast('URL pasted from clipboard.','in');}}catch{}
+  });
+  inp.addEventListener('keydown', e=>{if(e.key==='Enter')doFetch();});
+  document.addEventListener('keydown', e=>{
+    if((e.key==='Enter'||e.key===' ')&&document.activeElement?.classList.contains('fqq')){e.preventDefault();document.activeElement.parentElement.classList.toggle('open');}
+  });
+  document.querySelectorAll('a[href^="#"]').forEach(l=>{
+    l.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(l.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('mm').classList.add('hidden');}});
+  });
+});
+</script>
+</body>
+</html>
